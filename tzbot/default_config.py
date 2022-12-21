@@ -14,6 +14,14 @@ class Config(object):
     LOGGER = True
     REMOVE_TAG = False
 
+    # REQUIRED
+    API_KEY = "1234567890:Abcdef1234567890GHIJ"  # API key obtained from BotFather
+    OWNER_ID = "1234567890"  # If you dont know, run the bot and do /id in your private chat with the bot
+
+    # FOR AUTOMATICALLY FORWARDING MESSAGES
+    FROM_CHATS = [-1001234567890]  # List of chat id's to forward messages from
+    TO_CHATS = [-1001234567890]  # List of chat id's to forward messages to
+
     # FOR WEBHOOKS
     WEBHOOK = False
     IP_ADDRESS = "127.0.0.1"  # Use "0.0.0.0" if using Heroku
