@@ -38,6 +38,7 @@ if ENV:
     CERT_PATH = os.environ.get("CERT_PATH")
 
     WORKERS = int(os.environ.get("WORKERS", 4))
+    WORDS_TO_FORWARD = str(os.environ.get("WORDS_TO_FORWARD"))
 
 else:
     from tzbot.config import Development as Config
@@ -66,7 +67,7 @@ else:
     CERT_PATH = Config.CERT_PATH
 
     WORKERS = Config.WORKERS
-
+    WORDS_TO_FORWARD = Config.WORDS_TO_FORWARD
 
 updater = tg.Updater(API_KEY, workers=WORKERS, use_context=True)
 
