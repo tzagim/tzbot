@@ -5,7 +5,7 @@ from telegram.ext import CallbackContext, Filters, MessageHandler
 from telegram.error import ChatMigrated
 from telegram.update import Update
 
-from tzbot import FROM_CHATS, LOGGER, REMOVE_TAG, TO_CHATS, dispatcher
+from tzbot import FROM_CHATS, LOGGER, REMOVE_TAG, TO_CHATS, dispatcher, WORDS_TO_FORWARD
 
 
 def send_message(message: Message, chat_id: int) -> Union[MessageId, Message]:
@@ -41,7 +41,7 @@ def forward(update: Update, context: CallbackContext):
 
 try:
     FORWARD_HANDLER = MessageHandler(
-        Filters.chat(FROM_CHATS) & ~Filters.status_update & ~Filters.command,
+        Filters.chat(FROM_CHATS) & ~Filters.status_update & ~Filters.command & Filters.regex(WORDS_TO_FORWARD),
         forward,
         run_async=True,
     )
