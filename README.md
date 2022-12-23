@@ -36,6 +36,9 @@ class Development(Config):
     # Make sure to include the '-' sign in group and channel ids.
     FROM_CHATS = [-1001234567890]  # List of chat id's to forward messages from.
     TO_CHATS = [-1001234567890, -1234567890]  # List of chat id's to forward messages to.
+    
+    # If you don't want to filter text with specific words to be forwarded, just delete the next line
+    WORDS_TO_FORWARD = '(regex.*)(Some|text|to|filter)'
 
     REMOVE_TAG = True
     WORKERS = 4
