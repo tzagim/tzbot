@@ -99,4 +99,4 @@ Once you've setup your database and your configuration (see below) is complete, 
 ### Credits
 
 * [saksham2410](https://github.com/saksham2410) - AutoForwarder-TelegramBot
-* [MrMissx](https://github.com/MrMissx) - Telegram_Forwarde
+* [MrMissx](https://github.com/MrMissx) - Telegram_Forwarder
