@@ -32,6 +32,10 @@ class Config(object):
     WORKERS = 4  # Depends on usage, 4 by default
 
     WORDS_TO_FORWARD = '(.*)'
+    
+    # Supported languages
+    # en, he
+    LANG = 'en'
 
 class Production(Config):
     LOGGER = False
