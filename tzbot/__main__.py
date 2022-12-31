@@ -4,23 +4,18 @@ from telegram import ParseMode, Update
 from telegram.ext import CommandHandler, Filters
 
 from tzbot import (API_KEY, CERT_PATH, IP_ADDRESS, LOGGER, OWNER_ID, PORT,
-                       URL, WEBHOOK, dispatcher, updater)
+                       URL, WEBHOOK, dispatcher, updater, LANG)
 from tzbot.modules import ALL_MODULES
 
-PM_START_TEXT = """
-היי {}, אני {}!
-אני עושה פעולות רק למען הצלת חיים.
+from tzbot.langdict import en, he
 
-בכדי לדעת עלי עוד, לחץ על /help.
-"""
+if LANG == 'he':
+  LANG = he
+else:
+  LANG = en
 
-PM_HELP_TEXT = """
-להלן רשימת פקודות אפשריות:
- - /start : להדליק אותי :).
- - /help : לשלוח לך את הודעת העזרה הזו.
-
-ואם תשלח לי /id באישי/קבוצה/ערוץ וכדו' אשלח לך את ה-id.
-"""
+PM_START_TEXT = LANG.get('Pm_Start')
+PM_HELP_TEXT = LANG.get('Pm_Help')
 
 for module in ALL_MODULES:
     importlib.import_module("tzbot.modules." + module)
@@ -37,7 +32,7 @@ def start(update: Update, _):
             parse_mode=ParseMode.HTML,
         )
     else:
-        message.reply_text("אני למעלה ורץ!")
+        message.reply_text(LANG.get('Run'))
 
 
 def help(update: Update, _):
@@ -45,7 +40,7 @@ def help(update: Update, _):
     message = update.effective_message
 
     if not chat.type == "private":
-        message.reply_text("שלח לי הודעה פרטית בכדי לקבל את רשימת הפקודות.")
+        message.reply_text(LANG.get('Pm_Me'))
     else:
         message.reply_text(PM_HELP_TEXT)
 
