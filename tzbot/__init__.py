@@ -16,7 +16,7 @@ ENV = bool(os.environ.get("ENV", False))
 if ENV:
     API_KEY = os.environ.get("API_KEY", None)
     try:
-        OWNER_ID = int(os.environ.get("OWNER_ID", 0))
+        OWNER_ID = set(int(x) for x in os.environ.get("OWNER_ID", "").split())
     except ValueError:
         raise Exception("Your OWNER_ID env variable is not a valid integer.")
 
@@ -29,6 +29,11 @@ if ENV:
         TO_CHATS = set(int(x) for x in os.environ.get("TO_CHATS", "").split())
     except ValueError:
         raise Exception("Your TO_CHATS list does not contain valid integers.")
+
+    try:
+        GROUPS_TO_DELELTE = set(int(x) for x in os.environ.get("GROUPS_TO_DELELTE", "").split())
+    except ValueError:
+        raise Exception("Your GROUPS_TO_DELELTE list does not contain valid integers.")
 
     REMOVE_TAG = bool(os.environ.get("REMOVE_TAG", False))
     WEBHOOK = bool(os.environ.get("WEBHOOK", False))
@@ -45,7 +50,7 @@ else:
 
     API_KEY = Config.API_KEY
     try:
-        OWNER_ID = int(Config.OWNER_ID)
+        OWNER_ID = set(int(x) for x in Config.OWNER_ID)
     except ValueError:
         raise Exception("Your OWNER_ID variable is not a valid integer.")
 
@@ -58,6 +63,13 @@ else:
         TO_CHATS = set(int(x) for x in Config.TO_CHATS or [])
     except ValueError:
         raise Exception("Your TO_CHATS list does not contain valid integers.")
+
+    try:
+        GROUPS_TO_DELELTE = set(int(x) for x in Config.GROUPS_TO_DELELTE)
+    except ValueError:
+        raise Exception("Your GROUPS_TO_DELELTE list does not contain valid integers.")
+
+    LANG = Config.LANG
 
     REMOVE_TAG = Config.REMOVE_TAG
     WEBHOOK = Config.WEBHOOK
@@ -73,5 +85,7 @@ updater = tg.Updater(API_KEY, workers=WORKERS, use_context=True)
 
 dispatcher = updater.dispatcher
 
+OWNER_ID = list(OWNER_ID)
 FROM_CHATS = list(FROM_CHATS)
 TO_CHATS = list(TO_CHATS)
+GROUPS_TO_DELELTE = list(GROUPS_TO_DELELTE)
