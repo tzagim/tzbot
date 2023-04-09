@@ -32,11 +32,7 @@ def forward(update: Update, context: CallbackContext):
             send_message(message, err.new_chat_id)
             LOGGER.warning(f"Chat {chat} has been migrated to {err.new_chat_id}!! Edit the config file!!")
         except:
-            LOGGER.exception(
-                'Error while forwarding message from chat "{}" to chat "{}".'.format(
-                    from_chat_name, to_chat_name
-                )
-            )
+            LOGGER.exception(f'Error while forwarding message from chat {from_chat_name} to chat {to_chat_name}.')
 
 
 try:
