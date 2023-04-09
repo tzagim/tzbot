@@ -44,6 +44,7 @@ if ENV:
 
     WORKERS = int(os.environ.get("WORKERS", 4))
     WORDS_TO_FORWARD = str(os.environ.get("WORDS_TO_FORWARD"))
+    TIME_TO_DELELTE = int(os.environ.get("TIME_TO_DELELTE", 10800))
 
 else:
     from tzbot.config import Development as Config
@@ -80,6 +81,7 @@ else:
 
     WORKERS = Config.WORKERS
     WORDS_TO_FORWARD = Config.WORDS_TO_FORWARD
+    TIME_TO_DELELTE = Config.TIME_TO_DELELTE
 
 updater = tg.Updater(API_KEY, workers=WORKERS, use_context=True)
 
