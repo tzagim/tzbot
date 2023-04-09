@@ -21,7 +21,11 @@ class Config(object):
     # FOR AUTOMATICALLY FORWARDING MESSAGES
     FROM_CHATS = [-1001234567890]  # List of chat id's to forward messages from
     TO_CHATS = [-1001234567890]  # List of chat id's to forward messages to
-
+    
+    # FOR DELELTE MESSAGES AFTER X MINUTS
+    GROUPS_TO_DELELTE = [-1001234567890] # List of chat id's to delete messages from
+    TIME_TO_DELELTE = 900 # 15 min in sec
+    
     # FOR WEBHOOKS
     WEBHOOK = False
     IP_ADDRESS = "127.0.0.1"  # Use "0.0.0.0" if using Heroku
@@ -32,7 +36,7 @@ class Config(object):
     WORKERS = 4  # Depends on usage, 4 by default
 
     WORDS_TO_FORWARD = '(.*)'
-    
+
     # Supported languages
     # en, he
     LANG = 'en'
