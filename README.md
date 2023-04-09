@@ -8,6 +8,10 @@ The bot must be granted deletion privileges in order to delete messages user lea
 
 A simple Telegram Python bot running on Python3 to automatically forward messages from one chat to another.
 
+# Auto Delete messages after X time
+Automatic deletion of messages after a specified period of time, please note that you cannot delete messages of another bot, Because of Telegram limitations.
+
+A simple Telegram Python bot running on Python3 to automatically forward messages from one chat to another.
 
 ## Setting Up The Bot (Read Before Trying To Use!):
 Please make sure to use the latest Python version. (*Recommended*)
@@ -24,6 +28,8 @@ This is where your bot token will be loaded from, and most of your other setting
 It is recommended to import `default_config` and extend the `Config` class, as this will ensure your config contains all 
 defaults set in the `default_config`, hence making it easier to upgrade.
 
+#### *An action you don't want to perform, just ignore lines that run it.*
+
 An example `config.py` file could be:
 ```
 from tzbot.default_config import Config
@@ -31,14 +37,21 @@ from tzbot.default_config import Config
 
 class Development(Config):
     API_KEY = "1234567890:Abcdef1234567890GHIJ"  # Your bot API key
-    OWNER_ID = [1234567890]  # Your user id
+    OWNER_ID = [1234567890]  # List of your's id and your best freind :)
 
     # Make sure to include the '-' sign in group and channel ids.
     FROM_CHATS = [-1001234567890]  # List of chat id's to forward messages from.
     TO_CHATS = [-1001234567890, -1234567890]  # List of chat id's to forward messages to.
     
-    # If you don't want to filter text with specific words to be forwarded, just delete the next line
+    # If you want to delete messages.
+    GROUPS_TO_DELELTE = [-1001234567890] # List of chat id's to delete messages from
+    TIME_TO_DELELTE = 900 # 15 min in sec, you can use also 15*60
+    
+    # If you don't want to filter text with specific words to be forwarded, use regex.
     WORDS_TO_FORWARD = '(regex.*)(Some|text|to|filter)'
+    
+    # You can communicate with the bot in supported languages (Hebrew and English, for now) the default is English.
+    LANG = 'he' # If you want to use in Hebrew
 
     REMOVE_TAG = True
     WORKERS = 4
@@ -50,7 +63,7 @@ The following environment variables are supported:
  - `ENV`: Setting this to `ANYTHING` will enable environment variables.
 
  - `API_KEY`: Your bot API key, as a string.
- - `OWNER_ID`: An integer of consisting of your owner ID.
+ - `OWNER_ID`:  **Space separated** List of consisting of your owner ID's.
 
  - `FROM_CHATS`: **Space separated** list of chat ID's to forward messages from. Do not forget to include the 
 minus (-) sign in the chat ID's of groups and channels. You can add ID's of users too, to forward their 
@@ -58,6 +71,14 @@ messages with the bot.
  - `TO_CHATS`: **Space separated** list of chat ID's to forward messages to. Do not forget to include the 
 minus (-) sign in the chat ID's of groups and channels. You can add ID's of users too, to forward messages to them.
  - `REMOVE_TAG`: Wether remove the "Forwarded From ...." tag or not.
+
+ - `GROUPS_TO_DELELTE`: **Space separated** list of chat ID's to delete messages from after a time that you set in the next option. 
+Do not forget to include the minus (-) sign in the chat ID's of groups and channels. You can add ID's of users too, to forward messages to them.
+ - `TIME_TO_DELELTE`: An integer of seconds to delete, can also be given through a mathematical exercise, for example 15*60 
+
+ - `WORDS_TO_FORWARD`: If you don't want to filter text with specific words to be forwarded, use regex. 
+
+ - `LANG`: The language in which the bot will answer you, Hebrew and English are currently supported, the default is English
 
  - `WEBHOOK`: Setting this to `ANYTHING` will enable webhooks when in env mode messages.
  - `URL`: The URL your webhook should connect to (only needed for webhook mode).
