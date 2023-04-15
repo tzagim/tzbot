@@ -44,8 +44,8 @@ class Development(Config):
     TO_CHATS = [-1001234567890, -1234567890]  # List of chat id's to forward messages to.
     
     # If you want to delete messages.
-    GROUPS_TO_DELELTE = [-1001234567890] # List of chat id's to delete messages from
-    TIME_TO_DELELTE = 900 # 15 min in sec, you can use also 15*60
+    GROUPS_TO_DELETE = [-1001234567890] # List of chat id's to delete messages from
+    TIME_TO_DELETE = 900 # 15 min in sec, you can use also 15*60
     
     # If you don't want to filter text with specific words to be forwarded, use regex.
     WORDS_TO_FORWARD = '(regex.*)(Some|text|to|filter)'
