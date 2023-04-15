@@ -1,6 +1,4 @@
-FROM python:3.8-alpine
-
-ENV LANG=C.UTF-8
+FROM python:3.9.4
 
 RUN apk update && apk add --no-cache alpine-sdk \ 
                                      python3-dev \

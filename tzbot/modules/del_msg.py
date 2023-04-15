@@ -1,13 +1,11 @@
 from telegram.error import BadRequest
-from telegram.ext import MessageHandler, Filters
-from telegram.ext.jobqueue import Job
-from telegram.update import Update
-from tzbot import dispatcher, TIME_TO_DELETE, GROUPS_TO_DELETE
+from telegram.ext import MessageHandler, filters
+from tzbot import TIME_TO_DELETE, GROUPS_TO_DELETE, application, LOGGER
 
 # create a dictionary to store messages
 messages = {}
 
-def store_message(update, context):
+async def store_message(update, context):
     chat_id = update.effective_message.chat_id
     message_id = update.effective_message.message_id
     message_text = update.effective_message.text
@@ -16,21 +14,34 @@ def store_message(update, context):
     messages[(chat_id, message_id)] = message_text
 
     # schedule a job to delete the message after X minutes
-    context.job_queue.run_once(delete_message, TIME_TO_DELETE, context=(chat_id, message_id))
+    context.job_queue.run_once(
+        delete_message, TIME_TO_DELETE, data=(chat_id, message_id)
+    )
 
-def delete_message(context):
-    chat_id, message_id = context.job.context
+async def delete_message(context):
+    chat_id, message_id = context.job.data
     try:
-       context.bot.delete_message(chat_id, message_id)
+        # delete the message from the chat
+        await context.bot.delete_message(chat_id, message_id)
+
     except BadRequest as err:
-        if err.message == "Message can't be deleted":
-            LOGGER.exception("Cannot delete all messages. The messages may be too old, I might not have delete rights, or this might not be a supergroup.")
-        elif err.message != "Message to delete not found":
-            LOGGER.exception("Error while purging chat messages.")
-    except:
-        return
+        if err.message == 'Message to delete not found':
+            pass
+        else:
+            LOGGER.warning(f'Error deleting message: {err}')
+    except Exception as err:
+        LOGGER.warning(f'Error deleting message: {err}')
+    else:
+        # delete the message from the dictionary
+        messages.pop((chat_id, message_id), None)
 
-    # delete the message from the dictionary and from the chat
-    messages.pop((chat_id, message_id), None)
+try:
+    DELETE_MESSAGES = MessageHandler(
+        filters.Chat(GROUPS_TO_DELETE),
+        store_message,
+    )
 
-dispatcher.add_handler(MessageHandler(Filters.chat(GROUPS_TO_DELETE), store_message))
+    application.add_handler(DELETE_MESSAGES)
+
+except ValueError: 
+    LOGGER.warning("I can't DELETE_MESSAGES, BOT must be made an administrator with delete message permission.")

@@ -1,48 +1,46 @@
-from typing import Union
+﻿from typing import Union
 
 from telegram import Message, MessageId
-from telegram.ext import CallbackContext, Filters, MessageHandler
+from telegram.ext import CallbackContext, filters, MessageHandler
 from telegram.error import ChatMigrated
-from telegram.update import Update
 
-from tzbot import FROM_CHATS, LOGGER, REMOVE_TAG, TO_CHATS, dispatcher, WORDS_TO_FORWARD
+from tzbot import FROM_CHATS, LOGGER, REMOVE_TAG, TO_CHATS, WORDS_TO_FORWARD, application
 
 
-def send_message(message: Message, chat_id: int) -> Union[MessageId, Message]:
+async def send_message(message: Message, chat_id: int) -> Union[MessageId, Message]:
     if REMOVE_TAG:
-        return message.copy(chat_id)
-    return message.forward(chat_id)
+        return await message.copy(chat_id)
+    return await message.forward(chat_id)
 
-
-
-def forward(update: Update, context: CallbackContext):
+async def forward(update, context: CallbackContext):
     message = update.effective_message
     chat = update.effective_chat
     if not message or not chat:
         return
-    from_chat_name = chat.title or chat.first_name
+    from_chat_name = chat.title or chat.first_name or "Unknown chat"
 
     for chat in TO_CHATS:
-        to_chat_name = (
-            context.bot.get_chat(chat).title or context.bot.get_chat(chat).first_name
-        )
+        to_chat = await context.bot.get_chat(chat)
+        to_chat_name = to_chat.title or to_chat.first_name or "Unknown chat"
+
         try:
-            send_message(message, chat)
+            await send_message(message, chat)
         except ChatMigrated as err:
-            send_message(message, err.new_chat_id)
+            await send_message(message, err.new_chat_id)
             LOGGER.warning(f"Chat {chat} has been migrated to {err.new_chat_id}!! Edit the config file!!")
         except:
             LOGGER.exception(f'Error while forwarding message from chat {from_chat_name} to chat {to_chat_name}.')
 
-
 try:
     FORWARD_HANDLER = MessageHandler(
-        Filters.chat(FROM_CHATS) & ~Filters.status_update & ~Filters.command & Filters.regex(WORDS_TO_FORWARD),
+        filters.Chat(FROM_CHATS)
+        & (~ filters.StatusUpdate.ALL)
+        & (~ filters.COMMAND)
+        & filters.Regex(WORDS_TO_FORWARD),
         forward,
-        run_async=True,
     )
 
-    dispatcher.add_handler(FORWARD_HANDLER)
+    application.add_handler(FORWARD_HANDLER)
 
 except ValueError:  # When FROM_CHATS list is not set because user doesn't know chat id(s)
     LOGGER.warn("I can't FORWARD_HANDLER because your FROM_CHATS list is empty.")
