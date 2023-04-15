@@ -74,9 +74,9 @@ messages with the bot.
 minus (-) sign in the chat ID's of groups and channels. You can add ID's of users too, to forward messages to them.
  - `REMOVE_TAG`: Wether remove the "Forwarded From ...." tag or not.
 
- - `GROUPS_TO_DELELTE`: **Space separated** list of chat ID's to delete messages from after a time that you set in the next option. 
+ - `GROUPS_TO_DELETE`: **Space separated** list of chat ID's to delete messages from after a time that you set in the next option. 
 Do not forget to include the minus (-) sign in the chat ID's of groups and channels. You can add ID's of users too, to forward messages to them.
- - `TIME_TO_DELELTE`: An integer of seconds to delete, can also be given through a mathematical exercise, for example 15*60 
+ - `TIME_TO_DELETE`: An integer of seconds to delete, can also be given through a mathematical exercise, for example 15*60 
 
  - `WORDS_TO_FORWARD`: If you don't want to filter text with specific words to be forwarded, use regex. 
 
