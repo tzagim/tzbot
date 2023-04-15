@@ -15,31 +15,23 @@ class Config(object):
     REMOVE_TAG = False
 
     # REQUIRED
-    API_KEY = "1234567890:Abcdef1234567890GHIJ"  # API key obtained from BotFather
-    OWNER_ID = "1234567890"  # If you dont know, run the bot and do /id in your private chat with the bot
+#    API_KEY = "1234567890:Abcdef1234567890GHIJ"  # API key obtained from BotFather
+#    OWNER_ID = "1234567890"  # If you dont know, run the bot and do /id in your private chat with the bot
 
     # FOR AUTOMATICALLY FORWARDING MESSAGES
-    FROM_CHATS = [-1001234567890]  # List of chat id's to forward messages from
-    TO_CHATS = [-1001234567890]  # List of chat id's to forward messages to
+#    FROM_CHATS = [-1001234567890]  # List of chat id's to forward messages from
+#    TO_CHATS = [-1001234567890]  # List of chat id's to forward messages to
     
-    # FOR DELETE MESSAGES AFTER X MINUTS
+    # FOR DELELTE MESSAGES AFTER X MINUTS
     GROUPS_TO_DELETE = [-1001234567890] # List of chat id's to delete messages from
     TIME_TO_DELETE = 900 # 15 min in sec
-    
-    # FOR WEBHOOKS
-    WEBHOOK = False
-    IP_ADDRESS = "127.0.0.1"  # Use "0.0.0.0" if using Heroku
-    URL = None  # The URL that the bot should listen to for updates
-    PORT = 5000  # Port to listen on for webhooks
-    CERT_PATH = None  # Path to certificate file
 
-    WORKERS = 4  # Depends on usage, 4 by default
 
     WORDS_TO_FORWARD = '(.*)'
 
     # Supported languages
     # en, he
-    LANG = 'en'
+#    LANG = 'en'
 
 class Production(Config):
     LOGGER = False

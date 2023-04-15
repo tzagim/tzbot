@@ -1,14 +1,15 @@
 import importlib
 
-from telegram import ParseMode, Update
-from telegram.ext import CommandHandler, Filters
+from telegram import Bot
+from telegram.constants import ParseMode
+from telegram.ext import CommandHandler, MessageHandler, filters
 
-from tzbot import (API_KEY, CERT_PATH, IP_ADDRESS, LOGGER, OWNER_ID, PORT,
-                       URL, WEBHOOK, dispatcher, updater, LANG)
+from tzbot import (API_KEY, LOGGER, OWNER_ID, LANG, application)
 from tzbot.modules import ALL_MODULES
 
 from tzbot.langdict import en, he
 
+# Choose language
 if LANG == 'he':
   LANG = he
 else:
@@ -17,60 +18,51 @@ else:
 PM_START_TEXT = LANG.get('Pm_Start')
 PM_HELP_TEXT = LANG.get('Pm_Help')
 
+# Adding modules
 for module in ALL_MODULES:
     importlib.import_module("tzbot.modules." + module)
 
-
-def start(update: Update, _):
+# Start
+async def start(update, _):
     chat = update.effective_chat
     message = update.effective_message
     user = update.effective_user
 
+    # Checking if this is a private chat 
     if chat.type == "private":
-        message.reply_text(
-            PM_START_TEXT.format(user.first_name, dispatcher.bot.first_name),
+        await message.reply_text(
+            PM_START_TEXT.format(user.first_name, application.bot.first_name),
             parse_mode=ParseMode.HTML,
         )
     else:
-        message.reply_text(LANG.get('Run'))
+        await message.reply_text(LANG.get('Run'))
 
 
-def help(update: Update, _):
+async def help(update, _):
     chat = update.effective_chat
     message = update.effective_message
 
+    # Checking if this is a private chat
     if not chat.type == "private":
-        message.reply_text(LANG.get('Pm_Me'))
+        await message.reply_text(LANG.get('Pm_Me'))
     else:
-        message.reply_text(PM_HELP_TEXT)
+        await message.reply_text(PM_HELP_TEXT)
 
+# Define error
+async def error(update, context):
+    LOGGER.warning('Update "%s" caused error "%s"', update, context.error)
 
-def main():
-    start_handler = CommandHandler(
-        "start", start, filters=Filters.user(OWNER_ID), run_async=True
-    )
-    help_handler = CommandHandler(
-        "help", help, filters=Filters.user(OWNER_ID), run_async=True
-    )
-    dispatcher.add_handler(start_handler)
-    dispatcher.add_handler(help_handler)
+def main():    
+    # Commands
+    start_handler = CommandHandler("start", start, filters=filters.User(OWNER_ID))
+    help_handler = CommandHandler("help", help, filters=filters.User(OWNER_ID))
 
-    if WEBHOOK and URL:
-        LOGGER.info("Using webhooks.")
-        updater.start_webhook(listen=IP_ADDRESS, port=PORT, url_path=API_KEY)
+    application.add_handler(start_handler)
+    application.add_handler(help_handler)
 
-        if CERT_PATH:
-            updater.bot.set_webhook(
-                url=URL + API_KEY, certificate=open(CERT_PATH, "rb")
-            )
-        else:
-            updater.bot.set_webhook(url=URL + API_KEY)
-
-    else:
-        LOGGER.info("Using long polling.")
-        updater.start_polling(timeout=15, read_latency=4)
-
-    updater.idle()
+    LOGGER.info("Using long polling.")
+    application.add_error_handler(error)
+    application.run_polling()
 
 
 if __name__ == "__main__":

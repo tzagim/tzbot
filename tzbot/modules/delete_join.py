@@ -1,10 +1,21 @@
-from telegram.ext import CallbackContext, MessageHandler, Filters
-from telegram.update import Update
-from tzbot import dispatcher
+from telegram.error import BadRequest
+from telegram.ext import CallbackContext, MessageHandler, filters
+from tzbot import application
 
-def delete_message(update: Update, context: CallbackContext):
+async def delete_message(update, context: CallbackContext):
     chat_id = update.effective_message.chat_id
     message_id = update.effective_message.message_id
-    context.bot.delete_message(chat_id, message_id)
+    await context.bot.delete_message(chat_id, message_id)
 
-dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members | Filters.status_update.left_chat_member ,delete_message))
+try:
+    DELETEֹ_JOIN = MessageHandler(
+        filters.StatusUpdate.NEW_CHAT_MEMBERS | filters.StatusUpdate.LEFT_CHAT_MEMBER ,delete_message,
+    )
+
+    application.add_handler(DELETEֹ_JOIN)
+
+except BadRequest as err:
+    if err.message == "Message can't be deleted":
+        LOGGER.exception("I can't DELETEֹ_JOIN because the BOT don't have permission, BOT must be made an administrator with delete message permission.")
+    elif err.message != "Message to delete not found":
+        LOGGER.exception("Error while purging chat messages.")
