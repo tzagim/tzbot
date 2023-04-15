@@ -31,9 +31,9 @@ if ENV:
         raise Exception("Your TO_CHATS list does not contain valid integers.")
 
     try:
-        GROUPS_TO_DELELTE = set(int(x) for x in os.environ.get("GROUPS_TO_DELELTE", "").split())
+        GROUPS_TO_DELETE = set(int(x) for x in os.environ.get("GROUPS_TO_DELETE", "").split())
     except ValueError:
-        raise Exception("Your GROUPS_TO_DELELTE list does not contain valid integers.")
+        raise Exception("Your GROUPS_TO_DELETE list does not contain valid integers.")
 
     REMOVE_TAG = bool(os.environ.get("REMOVE_TAG", False))
     WEBHOOK = bool(os.environ.get("WEBHOOK", False))
@@ -44,7 +44,7 @@ if ENV:
 
     WORKERS = int(os.environ.get("WORKERS", 4))
     WORDS_TO_FORWARD = str(os.environ.get("WORDS_TO_FORWARD"))
-    TIME_TO_DELELTE = int(os.environ.get("TIME_TO_DELELTE", 10800))
+    TIME_TO_DELETE = int(os.environ.get("TIME_TO_DELETE", 10800))
 
 else:
     from tzbot.config import Development as Config
@@ -81,7 +81,7 @@ else:
 
     WORKERS = Config.WORKERS
     WORDS_TO_FORWARD = Config.WORDS_TO_FORWARD
-    TIME_TO_DELELTE = Config.TIME_TO_DELELTE
+    TIME_TO_DELETE = Config.TIME_TO_DELETE
 
 updater = tg.Updater(API_KEY, workers=WORKERS, use_context=True)
 
@@ -90,4 +90,4 @@ dispatcher = updater.dispatcher
 OWNER_ID = list(OWNER_ID)
 FROM_CHATS = list(FROM_CHATS)
 TO_CHATS = list(TO_CHATS)
-GROUPS_TO_DELELTE = list(GROUPS_TO_DELELTE)
+GROUPS_TO_DELETE = list(GROUPS_TO_DELETE)
