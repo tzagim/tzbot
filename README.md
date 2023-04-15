@@ -1,4 +1,9 @@
 # tzbot
+### *please note:*
+
+version 2.x works with Telegram Python bot ver 20+
+
+version 1.X works with Telegram Python bot ver 13.15 and below!!
 
 # Deleting join and leave messages
 
@@ -19,7 +24,7 @@ Please make sure to use the latest Python version. (*Recommended*)
 
 ### Configuration
 
-There are two possible ways of configuring your bot: a `config.py` file, or ENV variables.
+There are two possible ways of configuring your bot: a `config.py` file.
 
 The prefered version is to use a `config.py` file, as it makes it easier to see all your settings grouped together.
 This file should be placed in `tzbot` folder, alongside the `__main__.py` file . 
@@ -54,13 +59,10 @@ class Development(Config):
     LANG = 'he' # If you want to use in Hebrew
 
     REMOVE_TAG = True
-    WORKERS = 4
 ```
 
-If you can't have a `config.py` file (EG on Heroku), it is also possible to use environment variables.
+If you can't have a `config.py` file, it is also possible to use environment variables.
 The following environment variables are supported:
-
- - `ENV`: Setting this to `ANYTHING` will enable environment variables.
 
  - `API_KEY`: Your bot API key, as a string.
  - `OWNER_ID`:  **Space separated** List of consisting of your owner ID's.
@@ -80,16 +82,6 @@ Do not forget to include the minus (-) sign in the chat ID's of groups and chann
 
  - `LANG`: The language in which the bot will answer you, Hebrew and English are currently supported, the default is English
 
- - `WEBHOOK`: Setting this to `ANYTHING` will enable webhooks when in env mode messages.
- - `URL`: The URL your webhook should connect to (only needed for webhook mode).
- - `CERT_PATH`: Path to your webhook certificate.
- - `PORT`: Port to use for your webhooks.
-
- - `WORKERS`: Number of threads to use. 4 is the recommended (and default) amount, but your experience may vary.
- **NOTE:** You may need to use more workers if the number of messages to be forwarded are more. 
- But going crazy with more threads wont necessarily speed up your bot due to the way python asynchronous calls work.
-
-
 ### Python dependencies
 
 Install the necessary python dependencies by moving to the project directory and running:
@@ -98,19 +90,6 @@ Install the necessary python dependencies by moving to the project directory and
 
 This will install all necessary python packages.
 
-
-### Launch in Docker container
-
-#### Requrements
- - Docker
- - docker-compose
-
-Before launch you need to copy file ```env_dist``` to file ```.env``` and fill the values in it.
-
-Then, simple run the command: ```docker-compose up -d```
-
-You can view the logs by the command: ```docker-compose logs -f```
-
 ## Starting The Bot
 
 Once you've setup your database and your configuration (see below) is complete, simply run:
@@ -118,6 +97,4 @@ Once you've setup your database and your configuration (see below) is complete, 
 `python3 -m tzbot`
 
 ### Credits
-
-* [saksham2410](https://github.com/saksham2410) - AutoForwarder-TelegramBot
-* [MrMissx](https://github.com/MrMissx) - Telegram_Forwarder
+For an early version of the bot: [MrMissx](https://github.com/MrMissx) - Telegram_Forwarder
