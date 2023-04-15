@@ -2,7 +2,7 @@ from telegram.error import BadRequest
 from telegram.ext import MessageHandler, Filters
 from telegram.ext.jobqueue import Job
 from telegram.update import Update
-from tzbot import dispatcher, TIME_TO_DELELTE, GROUPS_TO_DELELTE
+from tzbot import dispatcher, TIME_TO_DELETE, GROUPS_TO_DELETE
 
 # create a dictionary to store messages
 messages = {}
@@ -16,7 +16,7 @@ def store_message(update, context):
     messages[(chat_id, message_id)] = message_text
 
     # schedule a job to delete the message after X minutes
-    context.job_queue.run_once(delete_message, TIME_TO_DELELTE, context=(chat_id, message_id))
+    context.job_queue.run_once(delete_message, TIME_TO_DELETE, context=(chat_id, message_id))
 
 def delete_message(context):
     chat_id, message_id = context.job.context
@@ -33,4 +33,4 @@ def delete_message(context):
     # delete the message from the dictionary and from the chat
     messages.pop((chat_id, message_id), None)
 
-dispatcher.add_handler(MessageHandler(Filters.chat(GROUPS_TO_DELELTE) & Filters.text, store_message))
+dispatcher.add_handler(MessageHandler(Filters.chat(GROUPS_TO_DELETE), store_message))
