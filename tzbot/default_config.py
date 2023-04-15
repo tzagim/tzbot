@@ -22,9 +22,9 @@ class Config(object):
     FROM_CHATS = [-1001234567890]  # List of chat id's to forward messages from
     TO_CHATS = [-1001234567890]  # List of chat id's to forward messages to
     
-    # FOR DELELTE MESSAGES AFTER X MINUTS
-    GROUPS_TO_DELELTE = [-1001234567890] # List of chat id's to delete messages from
-    TIME_TO_DELELTE = 900 # 15 min in sec
+    # FOR DELETE MESSAGES AFTER X MINUTS
+    GROUPS_TO_DELETE = [-1001234567890] # List of chat id's to delete messages from
+    TIME_TO_DELETE = 900 # 15 min in sec
     
     # FOR WEBHOOKS
     WEBHOOK = False
