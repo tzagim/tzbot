@@ -24,9 +24,8 @@ Please make sure to use the latest Python version. (*Recommended*)
 
 ### Configuration
 
-There are two possible ways of configuring your bot: a `config.py` file.
+Configuring your bot: a `config.py` file.
 
-The prefered version is to use a `config.py` file, as it makes it easier to see all your settings grouped together.
 This file should be placed in `tzbot` folder, alongside the `__main__.py` file . 
 This is where your bot token will be loaded from, and most of your other settings.
 
