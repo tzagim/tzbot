@@ -37,7 +37,7 @@ async def delete_message(context):
 
 try:
     DELETE_MESSAGES = MessageHandler(
-        filters.Chat(GROUPS_TO_DELETE),
+        filters.Chat(GROUPS_TO_DELETE) & ~(filters.StatusUpdate.NEW_CHAT_MEMBERS | filters.StatusUpdate.LEFT_CHAT_MEMBER | filters.Regex(r"^/id|help|start")),
         store_message,
     )
 
