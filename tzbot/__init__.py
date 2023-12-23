@@ -7,6 +7,9 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 
+# hide info from httpx
+logging.getLogger("httpx").setLevel(logging.WARNING)
+
 LOGGER = logging.getLogger(__name__)
 
 from tzbot.config import Development as Config
