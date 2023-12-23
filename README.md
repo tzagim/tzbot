@@ -16,17 +16,13 @@ A simple Telegram Python bot running on Python3 to automatically forward message
 # Auto Delete messages after X time
 Automatic deletion of messages after a specified period of time, please note that you cannot delete messages of another bot, Because of Telegram limitations.
 
-A simple Telegram Python bot running on Python3 to automatically forward messages from one chat to another.
-
 ## Setting Up The Bot (Read Before Trying To Use!):
 Please make sure to use the latest Python version. (*Recommended*)
 
-
 ### Configuration
 
-There are two possible ways of configuring your bot: a `config.py` file.
+Configuring your bot: a `config.py` file.
 
-The prefered version is to use a `config.py` file, as it makes it easier to see all your settings grouped together.
 This file should be placed in `tzbot` folder, alongside the `__main__.py` file . 
 This is where your bot token will be loaded from, and most of your other settings.
 
@@ -38,7 +34,6 @@ defaults set in the `default_config`, hence making it easier to upgrade.
 An example `config.py` file could be:
 ```
 from tzbot.default_config import Config
-
 
 class Development(Config):
     API_KEY = "1234567890:Abcdef1234567890GHIJ"  # Your bot API key
