@@ -5,15 +5,16 @@ version 2.x works with Telegram Python bot ver 20+
 
 version 1.X works with Telegram Python bot ver 13.15 and below!!
 
-# Deleting join and leave messages
+## Features
+#### Deleting join and leave messages
 
 The bot must be granted deletion privileges in order to delete messages user leave or join the group.
 
-# Auto Forwarder
+#### Auto Forwarder
 
 A simple Telegram Python bot running on Python3 to automatically forward messages from one chat to another.
 
-# Auto Delete messages after X time
+#### Auto Delete messages after X time
 Automatic deletion of messages after a specified period of time, please note that you cannot delete messages of another bot, Because of Telegram limitations.
 
 ## Setting Up The Bot (Read Before Trying To Use!):
@@ -77,19 +78,39 @@ Do not forget to include the minus (-) sign in the chat ID's of groups and chann
 
  - `LANG`: The language in which the bot will answer you, Hebrew and English are currently supported, the default is English
 
+
+Installing
+==========
+
+
 ### Python dependencies
+Note: If you are using Python 3.12 and above, it is recommended to run first:
+
+    $ pip install --upgrade setuptools
+
+Update `python-telegram-bot` varsion:
+
+    $ pip install python-telegram-bot --upgrade
 
 Install the necessary python dependencies by moving to the project directory and running:
 
-`pip3 install -r requirements.txt`.
+    $ git clone https://github.com/tzagim/tzbot
+    $ cd tzbot
+    $ pip install -r requirements.txt
+
 
 This will install all necessary python packages.
 
-## Starting The Bot
+Starting The Bot
+==========
 
 Once you've setup your database and your configuration (see below) is complete, simply run:
 
-`python3 -m tzbot`
+    $ python3 -m tzbot
+
+Can be run in a screen with the following command:
+
+    $ screen -dmS tzbot python3 -m tzbot
 
 ### Credits
 For an early version of the bot: [MrMissx](https://github.com/MrMissx) - Telegram_Forwarder
