@@ -33,7 +33,8 @@ defaults set in the `default_config`, hence making it easier to upgrade.
 #### *An action you don't want to perform, just ignore lines that run it.*
 
 An example `config.py` file could be:
-```
+
+```Python
 from tzbot.default_config import Config
 
 class Development(Config):
@@ -86,18 +87,22 @@ Installing
 ### Python dependencies
 Note: If you are using Python 3.12 and above, it is recommended to run first:
 
-    $ pip install --upgrade setuptools
-
+```shell
+$ pip install --upgrade setuptools
+```
 Update `python-telegram-bot` varsion:
 
-    $ pip install python-telegram-bot --upgrade
+```shell
+$ pip install python-telegram-bot --upgrade
+```
 
 Install the necessary python dependencies by moving to the project directory and running:
 
-    $ git clone https://github.com/tzagim/tzbot
-    $ cd tzbot
-    $ pip install -r requirements.txt
-
+```shell
+$ git clone https://github.com/tzagim/tzbot
+$ cd tzbot
+$ pip install -r requirements.txt
+```
 
 This will install all necessary python packages.
 
