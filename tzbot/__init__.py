@@ -7,8 +7,9 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 
-# hide info from httpx
+# hide info from httpx & apscheduler.executors.default
 logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("apscheduler.executors.default").setLevel(logging.WARNING)
 
 LOGGER = logging.getLogger(__name__)
 
@@ -40,9 +41,21 @@ try:
 except ValueError:
     raise Exception("Your GROUPS_TO_DELETE list does not contain valid integers.")
 
+try:
+    APPROVED_MEMBERS = set(int(x) for x in Config.APPROVED_MEMBERS)
+except ValueError:
+    raise Exception("Your APPROVED_MEMBERS list does not contain valid integers.")
+
+try:
+    GROUPS_TO_BAN = set(int(x) for x in Config.GROUPS_TO_BAN)
+except ValueError:
+    raise Exception("Your GROUPS_TO_BAN list does not contain valid integers.")
+
 OWNER_ID = list(OWNER_ID)
 FROM_CHATS = list(FROM_CHATS)
 TO_CHATS = list(TO_CHATS)
 GROUPS_TO_DELETE = list(GROUPS_TO_DELETE)
+APPROVED_MEMBERS = list(APPROVED_MEMBERS)
+GROUPS_TO_BAN = list(GROUPS_TO_BAN)
 
 application = Application.builder().token(API_KEY).concurrent_updates(True).build()
