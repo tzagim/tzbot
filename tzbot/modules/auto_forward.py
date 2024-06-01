@@ -1,4 +1,4 @@
-﻿import asyncio
+import asyncio
 from typing import Union, Optional
 
 from telegram import Update, Message, MessageId
