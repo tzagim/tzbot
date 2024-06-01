@@ -1,6 +1,6 @@
 from telegram.error import BadRequest
 from telegram.ext import MessageHandler, filters
-from tzbot import TIME_TO_DELETE, GROUPS_TO_DELETE, application, LOGGER
+from tzbot import TIME_TO_DELETE, GROUPS_TO_DELETE, bot, LOGGER
 
 # create a dictionary to store messages
 messages = {}
@@ -41,7 +41,7 @@ try:
         store_message,
     )
 
-    application.add_handler(DELETE_MESSAGES)
+    bot.add_handler(DELETE_MESSAGES)
 
 except ValueError: 
     LOGGER.warning("I can't DELETE_MESSAGES, BOT must be made an administrator with delete message permission.")

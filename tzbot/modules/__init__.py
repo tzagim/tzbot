@@ -1,9 +1,9 @@
 from tzbot import LOGGER
-import glob
-from os.path import basename, dirname, isfile
 
 
 def __list_all_modules():
+    import glob
+    from os.path import basename, dirname, isfile
 
     # This generates a list of modules in this folder for the * in __main__ to work.
     mod_paths = glob.glob(dirname(__file__) + "/*.py")
@@ -14,6 +14,7 @@ def __list_all_modules():
     ]
 
     return all_modules
+
 
 ALL_MODULES = sorted(__list_all_modules())
 LOGGER.info("Modules to load: " + str(ALL_MODULES))

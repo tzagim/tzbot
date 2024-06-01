@@ -1,46 +1,61 @@
-﻿from typing import Union
+﻿import asyncio
+from typing import Union, Optional
 
-from telegram import Message, MessageId
-from telegram.ext import CallbackContext, filters, MessageHandler
-from telegram.error import ChatMigrated
+from telegram import Update, Message, MessageId
+from telegram.error import ChatMigrated, RetryAfter
+from telegram.ext import MessageHandler, filters, ContextTypes
 
-from tzbot import FROM_CHATS, LOGGER, REMOVE_TAG, TO_CHATS, WORDS_TO_FORWARD, application
+from tzbot import bot, REMOVE_TAG, LOGGER
+from tzbot.utils import get_destination, get_config, predicate_text
 
 
-async def send_message(message: Message, chat_id: int) -> Union[MessageId, Message]:
+async def send_message(
+    message: Message, chat_id: int, thread_id: Optional[int] = None
+) -> Union[MessageId, Message]:
     if REMOVE_TAG:
-        return await message.copy(chat_id)
-    return await message.forward(chat_id)
+        return await message.copy(chat_id, message_thread_id=thread_id)  # type: ignore
+    return await message.forward(chat_id, message_thread_id=thread_id)  # type: ignore
 
-async def forward(update, context: CallbackContext):
+
+async def forwarder(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     message = update.effective_message
-    chat = update.effective_chat
-    if not message or not chat:
+    source = update.effective_chat
+
+    if not message or not source:
         return
-    from_chat_name = chat.title or chat.first_name or "Unknown chat"
 
-    for chat in TO_CHATS:
-        to_chat = await context.bot.get_chat(chat)
-        to_chat_name = to_chat.title or to_chat.first_name or "Unknown chat"
+    dest = get_destination(source.id, message.message_thread_id)
 
-        try:
-            await send_message(message, chat)
-        except ChatMigrated as err:
-            await send_message(message, err.new_chat_id)
-            LOGGER.warning(f"Chat {chat} has been migrated to {err.new_chat_id}!! Edit the config file!!")
-        except:
-            LOGGER.exception(f'Error while forwarding message from chat {from_chat_name} to chat {to_chat_name}.')
+    for config in dest:
 
-try:
-    FORWARD_HANDLER = MessageHandler(
-        filters.Chat(FROM_CHATS)
-        & (~ filters.StatusUpdate.ALL)
-        & (~ filters.COMMAND)
-        & filters.Regex(WORDS_TO_FORWARD),
-        forward,
-    )
+        if config.filters:
+            if not predicate_text(config.filters, message.text or ""):
+                return
+        if config.blacklist:
+            if predicate_text(config.blacklist, message.text or ""):
+                return
 
-    application.add_handler(FORWARD_HANDLER)
+        for chat in config.destination:
+            LOGGER.debug(f"Forwarding message {source.id} to {chat}")
+            try:
+                await send_message(message, chat.get_id(), chat.get_topic())
+            except RetryAfter as err:
+                LOGGER.warning(f"Rate limited, retrying in {err.retry_after} seconds")
+                await asyncio.sleep(err.retry_after + 0.2)
+                await send_message(message, chat.get_id(), thread_id=chat.get_topic())
+            except ChatMigrated as err:
+                await send_message(message, err.new_chat_id)
+                LOGGER.warning(
+                    f"Chat {chat} has been migrated to {err.new_chat_id}!! Edit the config file!!"
+                )
+            except Exception as err:
+                LOGGER.error(f"Failed to forward message from {source.id} to {chat} due to {err}")
 
-except ValueError:  # When FROM_CHATS list is not set because user doesn't know chat id(s)
-    LOGGER.warn("I can't FORWARD_HANDLER because your FROM_CHATS list is empty.")
+
+FORWARD_HANDLER = MessageHandler(
+    filters.Chat([config.source.get_id() for config in get_config()])
+    & ~filters.COMMAND
+    & ~filters.StatusUpdate.ALL,
+    forwarder,
+)
+bot.add_handler(FORWARD_HANDLER)
