@@ -9,7 +9,7 @@ async def delete_message(update, context: CallbackContext):
 
 try:
     DELETEֹ_JOIN = MessageHandler(
-        filters.StatusUpdate.NEW_CHAT_MEMBERS | filters.StatusUpdate.LEFT_CHAT_MEMBER | ~filters.User(OWNER_ID) & filters.Regex("^/") ,delete_message,
+        filters.StatusUpdate.NEW_CHAT_MEMBERS | filters.StatusUpdate.LEFT_CHAT_MEMBER | ~(filters.User(OWNER_ID) | filters.ChatType.CHANNEL) & filters.Regex("^/") ,delete_message,
     )
 
     bot.add_handler(DELETEֹ_JOIN)
