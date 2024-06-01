@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  telegram-forwarder:
+    container_name: tzbot
+    image: tzbot-image
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - config.env

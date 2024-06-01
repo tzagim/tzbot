@@ -1,6 +1,6 @@
 from telegram.error import BadRequest
 from telegram.ext import CallbackContext, MessageHandler, filters
-from tzbot import application
+from tzbot import bot, OWNER_ID
 
 async def delete_message(update, context: CallbackContext):
     chat_id = update.effective_message.chat_id
@@ -9,10 +9,10 @@ async def delete_message(update, context: CallbackContext):
 
 try:
     DELETEֹ_JOIN = MessageHandler(
-        filters.StatusUpdate.NEW_CHAT_MEMBERS | filters.StatusUpdate.LEFT_CHAT_MEMBER ,delete_message,
+        filters.StatusUpdate.NEW_CHAT_MEMBERS | filters.StatusUpdate.LEFT_CHAT_MEMBER | ~filters.User(OWNER_ID) & filters.Regex("^/") ,delete_message,
     )
 
-    application.add_handler(DELETEֹ_JOIN)
+    bot.add_handler(DELETEֹ_JOIN)
 
 except BadRequest as err:
     if err.message == "Message can't be deleted":
