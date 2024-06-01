@@ -1,14 +1,15 @@
 # tzbot
 ### *please note:*
+version 3.x works with Telegram Python bot ver 21+
 
 version 2.x works with Telegram Python bot ver 20+
 
 version 1.X works with Telegram Python bot ver 13.15 and below!!
 
 ## Features
-#### Deleting join and leave messages
+#### Deleting join and leave messages and commands
 
-The bot must be granted deletion privileges in order to delete messages user leave or join the group.
+The bot must be granted deletion privileges in order to delete messages user leave or join the group, and also commands by users other than the bot owner.
 
 #### Auto Forwarder
 
@@ -22,63 +23,76 @@ Please make sure to use the latest Python version. (*Recommended*)
 
 ### Configuration
 
-Configuring your bot: a `config.py` file.
+Configuring your bot: a `config.env` and `chat_list.json` files.
 
 This file should be placed in `tzbot` folder, alongside the `__main__.py` file . 
 This is where your bot token will be loaded from, and most of your other settings.
 
-It is recommended to import `default_config` and extend the `Config` class, as this will ensure your config contains all 
-defaults set in the `default_config`, hence making it easier to upgrade.
 
-#### *An action you don't want to perform, just ignore lines that run it.*
+#### `config.env`
 
-An example `config.py` file could be:
+Template env may be found in `sample.config.env`. Rename it to `config.env` and fill in the values:
 
-```Python
-from tzbot.default_config import Config
+- `BOT_TOKEN` - Telegram bot token. You can get it from [@BotFather](https://t.me/BotFather)
 
-class Development(Config):
-    API_KEY = "1234567890:Abcdef1234567890GHIJ"  # Your bot API key
-    OWNER_ID = [1234567890]  # List of your's id and your best freind :)
+- `OWNER_ID` - An integer of consisting of your owner ID.
 
-    # Make sure to include the '-' sign in group and channel ids.
-    FROM_CHATS = [-1001234567890]  # List of chat id's to forward messages from.
-    TO_CHATS = [-1001234567890, -1234567890]  # List of chat id's to forward messages to.
-    
-    # If you want to delete messages.
-    GROUPS_TO_DELETE = [-1001234567890] # List of chat id's to delete messages from
-    TIME_TO_DELETE = 900 # 15 min in sec, you can use also 15*60
-    
-    # If you don't want to filter text with specific words to be forwarded, use regex.
-    WORDS_TO_FORWARD = '(regex.*)(Some|text|to|filter)'
-    
-    # You can communicate with the bot in supported languages (Hebrew and English, for now) the default is English.
-    LANG = 'he' # If you want to use in Hebrew
+- `REMOVE_TAG` - set to `True` if you want to remove the tag ("Forwarded from xxxxx") from the forwarded message.
 
-    REMOVE_TAG = True
+#### `chat_list.json`
+
+Template chat_list may be found in `chat_list.sample.json`. Rename it to `chat_list.json`.
+
+This file contains the list of chats to forward messages from and to. The bot expect it to be an Array of objects with the following structure:
+
+```json
+[
+  {
+    "source": -10012345678,
+    "destination": [-10011111111, "-10022222222#123456"]
+  },
+  {
+    "source": "-10087654321#000000", // Topic/Forum group
+    "destination": ["-10033333333#654321"],
+    "filters": ["word1", "word2"] // message that contain this word will be forwarded
+  },
+  {
+    "source": -10087654321,
+    "destination": [-10033333333],
+    "blacklist": ["word3", "word4"] // message that contain this word will not be forwarded
+  },
+  {
+    "source": -10087654321,
+    "destination": [-10033333333],
+    "filters": ["word5"],
+    "blacklist": ["word6"]
+    // message must contain word5 and must not contain word6 to be forwarded
+  }
+]
 ```
 
-If you can't have a `config.py` file, it is also possible to use environment variables.
-The following environment variables are supported:
+An example `config.env` file could be:
 
- - `API_KEY`: Your bot API key, as a string.
- - `OWNER_ID`:  **Space separated** List of consisting of your owner ID's.
+```env
+BOT_TOKEN = 1234567890:Abcdef1234567890GHIJ
+OWNER_ID = 1234567890, 0987654321
+REMOVE_TAG = True
+GROUPS_TO_DELETE = -1001234567890, -1234567890
+TIME_TO_DELETE = 900
+```
+- `source` - The chat ID of the chat to forward messages from. It can be a group or a channel.
 
- - `FROM_CHATS`: **Space separated** list of chat ID's to forward messages from. Do not forget to include the 
-minus (-) sign in the chat ID's of groups and channels. You can add ID's of users too, to forward their 
-messages with the bot.
- - `TO_CHATS`: **Space separated** list of chat ID's to forward messages to. Do not forget to include the 
-minus (-) sign in the chat ID's of groups and channels. You can add ID's of users too, to forward messages to them.
- - `REMOVE_TAG`: Wether remove the "Forwarded From ...." tag or not.
+  > If the source chat is a Topic groups, you **MUST** explicitly specify the topic ID. The bot will ignore incoming message from topic group if the topic ID is not specified.
 
- - `GROUPS_TO_DELETE`: **Space separated** list of chat ID's to delete messages from after a time that you set in the next option. 
-Do not forget to include the minus (-) sign in the chat ID's of groups and channels. You can add ID's of users too, to forward messages to them.
- - `TIME_TO_DELETE`: An integer of seconds to delete, can also be given through a mathematical exercise, for example 15*60 
+- `destination` - An array of chat IDs to forward messages to. It can be a group or a channel.
 
- - `WORDS_TO_FORWARD`: If you don't want to filter text with specific words to be forwarded, use regex. 
+  > Destenation supports Topics chat. You can use `#topicID` string to forward to specific topic. Example: `[-10011111111, "-10022222222#123456"]`. With this config it will forward to chat `-10022222222` with topic `123456` and to chat `-10011111111` .
 
- - `LANG`: The language in which the bot will answer you, Hebrew and English are currently supported, the default is English
+- `filters` (Optional) - An array of strings to filter words. If the message containes any of the strings in the array, it **WILL BE** forwarded.
 
+- `blacklist` (Optional) - An array of strings to blacklist words. If the message containes any of the string in the array, it will **NOT BE** forwarded.
+
+You may add as many objects as you want. The bot will forward messages from all the chats in the `source` field to all the chats in the `destination` field. Duplicates are allowed as it already handled by the bot.
 
 Installing
 ==========
@@ -90,11 +104,6 @@ Note: If you are using Python 3.12 and above, it is recommended to run first:
 ```shell
 $ pip install --upgrade setuptools
 ```
-Update `python-telegram-bot` varsion:
-
-```shell
-$ pip install python-telegram-bot --upgrade
-```
 
 Install the necessary python dependencies by moving to the project directory and running:
 
@@ -105,6 +114,28 @@ $ pip install -r requirements.txt
 ```
 
 This will install all necessary python packages.
+
+### Launch in Docker container
+
+#### Requrements
+
+- Docker
+- docker compose
+
+Before launch make sure all configuration are completed (`config.env` and `chat_list.json`)!
+
+Then, simply run the command:
+
+```shell
+docker compose up -d
+```
+
+You can view the logs by the command:
+
+```shell
+docker compose logs -f
+```
+
 
 Starting The Bot
 ==========
@@ -118,4 +149,4 @@ Can be run in a screen with the following command:
     $ screen -dmS tzbot python3 -m tzbot
 
 ### Credits
-For an early version of the bot: [MrMissx](https://github.com/MrMissx) - Telegram_Forwarder
+Based on: [MrMissx](https://github.com/MrMissx) - [Telegram_Forwarder](https://github.com/MrMissx/Telegram_Forwarde)
