@@ -31,7 +31,7 @@ async def help(update: Update, _):
     if not chat.type == "private":
         await message.reply_text(strings["pm_me"][lang_code])
     else:
-        await message.reply_text(strings["pm_help"][lang_code].format(LANG, lang_code))
+        await message.reply_text(strings["pm_help"][lang_code])
 
 bot.add_handler(CommandHandler("start", start, filters=filters.User(OWNER_ID)))
 bot.add_handler(CommandHandler("help", help, filters=filters.User(OWNER_ID)))
