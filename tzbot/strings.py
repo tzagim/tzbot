@@ -8,8 +8,8 @@ strings = {
         "he": "אני באוויר ורץ!"
     },
     "pm_help": {
-        "en": "Here is a list of usable commands:\n- /start : Starts the bot.\n- /help : Sends you this help message.\njust send /id in private chat/group/channel and i will reply it's id.",
-        "he": "רשימת פקודות אפשריות:\n- /start : להפעלת הבוט.\n- /help : שליחת הודעת עזרה.\nשליחת /id בצאט/קבוצה/ערוץ אשלח את המזהה."
+        "en": "Here is a list of usable commands:\n- /start : Starts the bot.\n- /help : Sends you this help message.\n- /id in private chat/group/channel and i will reply it's id.",
+        "he": "רשימת פקודות אפשריות:\n- /start : להפעלת הבוט.\n- /help : שליחת הודעת עזרה.\n- /id בצאט/קבוצה/ערוץ אשלח את המזהה."
     },
     "pm_me": {
         "en": "Contact me via PM to get a list of usable commands.",

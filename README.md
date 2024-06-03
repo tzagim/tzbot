@@ -18,6 +18,9 @@ A simple Telegram Python bot running on Python3 to automatically forward message
 #### Auto Delete messages after X time
 Automatic deletion of messages after a specified period of time, please note that you cannot delete messages of another bot, Because of Telegram limitations.
 
+#### Translation
+Languages ​​can be added in `strings.py`, the default language is the user's language, if the user's language cannot be found or in channels the default is English.
+
 ## Setting Up The Bot (Read Before Trying To Use!):
 Please make sure to use the latest Python version. (*Recommended*)
 
@@ -28,16 +31,21 @@ Configuring your bot: a `config.env` and `chat_list.json` files.
 This file should be placed in `tzbot` folder, alongside the `__main__.py` file . 
 This is where your bot token will be loaded from, and most of your other settings.
 
-
 #### `config.env`
 
 Template env may be found in `sample.config.env`. Rename it to `config.env` and fill in the values:
 
 - `BOT_TOKEN` - Telegram bot token. You can get it from [@BotFather](https://t.me/BotFather)
 
-- `OWNER_ID` - An integer of consisting of your owner ID.
+- `OWNER_ID` - An integer or a comma-separated list of consisting of your owner ID.
 
 - `REMOVE_TAG` - set to `True` if you want to remove the tag ("Forwarded from xxxxx") from the forwarded message.
+
+- `GROUPS_TO_DELETE` = An integer or a comma-separated list of consisting of groups from which you want to delete messages after the set time.
+
+- `TIME_TO_DELETE` = An integer to set time to delete in seconds.
+ 
+- `DEFAULT_LANG` = Default language when the user language cannot be retrieved and in channels, if blank defaults to English.
 
 #### `chat_list.json`
 
@@ -79,6 +87,7 @@ OWNER_ID = 1234567890, 0987654321
 REMOVE_TAG = True
 GROUPS_TO_DELETE = -1001234567890, -1234567890
 TIME_TO_DELETE = 900
+DEFAULT_LANG = en
 ```
 - `source` - The chat ID of the chat to forward messages from. It can be a group or a channel.
 
@@ -149,4 +158,4 @@ Can be run in a screen with the following command:
     $ screen -dmS tzbot python3 -m tzbot
 
 ### Credits
-Based on: [MrMissx](https://github.com/MrMissx) - [Telegram_Forwarder](https://github.com/MrMissx/Telegram_Forwarde)
+Based on: [MrMissx](https://github.com/MrMissx) - [Telegram_Forwarder](https://github.com/MrMissx/Telegram_Forwarder)

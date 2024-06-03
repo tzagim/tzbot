@@ -8,14 +8,12 @@ from telegram.ext import MessageHandler, filters, ContextTypes
 from tzbot import bot, REMOVE_TAG, LOGGER
 from tzbot.utils import get_destination, get_config, predicate_text
 
-
 async def send_message(
     message: Message, chat_id: int, thread_id: Optional[int] = None
 ) -> Union[MessageId, Message]:
     if REMOVE_TAG:
         return await message.copy(chat_id, message_thread_id=thread_id)  # type: ignore
     return await message.forward(chat_id, message_thread_id=thread_id)  # type: ignore
-
 
 async def forwarder(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     message = update.effective_message
@@ -50,7 +48,6 @@ async def forwarder(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
                 )
             except Exception as err:
                 LOGGER.error(f"Failed to forward message from {source.id} to {chat} due to {err}")
-
 
 FORWARD_HANDLER = MessageHandler(
     filters.Chat([config.source.get_id() for config in get_config()])

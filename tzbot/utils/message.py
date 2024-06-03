@@ -2,7 +2,6 @@ import re
 
 from typing import List
 
-
 def predicate_text(filters: List[str], text: str) -> bool:
     """Check if the text contains any of the filters"""
     for i in filters:

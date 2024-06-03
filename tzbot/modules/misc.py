@@ -2,18 +2,15 @@ from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import filters, MessageHandler, ContextTypes
 from tzbot.strings import strings
-
-from tzbot import bot, OWNER_ID
+from tzbot import bot, OWNER_ID, LANG
 
 async def get_id(update: Update, _):
     message = update.effective_message
     chat = update.effective_chat
     try:
         lang_code = message.from_user.language_code
-    except AttributeError:
-        lang_code = 'en'
-    else:
-        lang_code = message.from_user.language_code
+    except AttributeError or KeyError:
+        lang_code = LANG
 
     if chat.type == 'private':  # Private chat with the bot
         return await message.reply_text(strings["your_id"][lang_code].format(chat.id), parse_mode=ParseMode.MARKDOWN)
@@ -39,9 +36,10 @@ async def get_id(update: Update, _):
         parse_mode=ParseMode.MARKDOWN,
     )
 
-
 GET_ID_HANDLER = MessageHandler(
-    filters.COMMAND & filters.Regex(r"^/id") & (filters.User(OWNER_ID) | filters.ChatType.CHANNEL),
+    filters.COMMAND
+    & filters.Regex(r"^/id")
+    & (filters.User(OWNER_ID) | filters.ChatType.CHANNEL),
     get_id,
 )
 

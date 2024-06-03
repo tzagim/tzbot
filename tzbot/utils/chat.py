@@ -2,9 +2,7 @@ from typing import List, List, Union, Optional
 
 from tzbot import CONFIG
 
-
 PARSED_CONFIG = []
-
 
 class ChatConfig:
     __chat: Union[str, int]
@@ -37,7 +35,6 @@ class ChatConfig:
             return self.__chat
         return int(self.__chat.split("#")[0])
 
-
 class ForwardConfig:
     source: ChatConfig
     destination: List[ChatConfig]
@@ -56,7 +53,6 @@ class ForwardConfig:
         self.filters = filters
         self.blacklist = blacklist
 
-
 def get_config() -> List[ForwardConfig]:
     global PARSED_CONFIG
     if PARSED_CONFIG:
@@ -72,7 +68,6 @@ def get_config() -> List[ForwardConfig]:
         for chat in CONFIG
     ]
     return PARSED_CONFIG
-
 
 def get_destination(chat_id: int, topic_id: Optional[int] = None) -> List[ForwardConfig]:
     """Get destination from a specific source chat

@@ -1,6 +1,5 @@
 from tzbot import LOGGER
 
-
 def __list_all_modules():
     import glob
     from os.path import basename, dirname, isfile
@@ -14,7 +13,6 @@ def __list_all_modules():
     ]
 
     return all_modules
-
 
 ALL_MODULES = sorted(__list_all_modules())
 LOGGER.info("Modules to load: " + str(ALL_MODULES))

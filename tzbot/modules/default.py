@@ -3,7 +3,7 @@ from telegram.ext import ContextTypes, CommandHandler, filters
 from telegram.constants import ParseMode
 
 from tzbot.strings import strings
-from tzbot import bot, OWNER_ID
+from tzbot import bot, OWNER_ID, LANG
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat = update.effective_chat
@@ -21,7 +21,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await message.reply_text(strings["run_msg"][lang_code])
 
-
 async def help(update: Update, _):
     chat = update.effective_chat
     message = update.effective_message
@@ -32,8 +31,7 @@ async def help(update: Update, _):
     if not chat.type == "private":
         await message.reply_text(strings["pm_me"][lang_code])
     else:
-        await message.reply_text(strings["pm_help"][lang_code])
-
+        await message.reply_text(strings["pm_help"][lang_code].format(LANG, lang_code))
 
 bot.add_handler(CommandHandler("start", start, filters=filters.User(OWNER_ID)))
 bot.add_handler(CommandHandler("help", help, filters=filters.User(OWNER_ID)))
