@@ -9,17 +9,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat = update.effective_chat
     message = update.effective_message
     user = update.effective_user
-    lang_code = message.from_user.language_code
+    lang_code = LANG
+    try:
+        lang_code = message.from_user.language_code
+    except (AttributeError, KeyError):
+        pass
     if not (chat and message and user):
         return
 
-    if chat.type == "private":
-        await message.reply_text(
-        strings["pm_start"][lang_code].format(user.first_name, context.bot.first_name),
-            parse_mode=ParseMode.HTML,
-        )
+    if user.id in OWNER_ID:
+        if chat.type == "private":
+            await message.reply_text(
+            strings["pm_start"][lang_code].format(user.first_name, context.bot.first_name),
+                parse_mode=ParseMode.HTML,
+            )
+        else:
+            await message.reply_text(strings["run_msg"][lang_code])
     else:
-        await message.reply_text(strings["run_msg"][lang_code])
+        await message.reply_text(strings["owner_only"][lang_code])
 
 async def help(update: Update, _):
     chat = update.effective_chat
@@ -33,5 +40,5 @@ async def help(update: Update, _):
     else:
         await message.reply_text(strings["pm_help"][lang_code])
 
-bot.add_handler(CommandHandler("start", start, filters=filters.User(OWNER_ID)))
-bot.add_handler(CommandHandler("help", help, filters=filters.User(OWNER_ID)))
+bot.add_handler(CommandHandler("start", start, filters = (filters.User(OWNER_ID) | filters.ChatType.PRIVATE)))
+bot.add_handler(CommandHandler("help", help, filters = filters.User(OWNER_ID)))

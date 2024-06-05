@@ -47,4 +47,8 @@ strings = {
         "en": "Sorry, I couldn't retrieve the requested information",
         "he": "מצטער, לא הצלחתי לאחזר את המידע המבוקש"
     },
+    "owner_only": {
+        "en": "Sorry, I respond to my owner(s) only.",
+        "he": "סליחה, אני מגיב לבעלים שלי בלבד."
+    },
 }

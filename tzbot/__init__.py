@@ -4,7 +4,6 @@ from os import getenv, path
 
 from dotenv import load_dotenv
 from telegram.ext import ApplicationBuilder, Defaults
-from telegram import Update
 
 # Load config.env
 load_dotenv("config.env")

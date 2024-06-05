@@ -1,6 +1,6 @@
 from telegram import Update
 from telegram.constants import ParseMode
-from telegram.ext import filters, MessageHandler, ContextTypes
+from telegram.ext import filters, MessageHandler
 from tzbot.strings import strings
 from tzbot import bot, OWNER_ID, LANG
 
