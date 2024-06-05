@@ -1,7 +1,7 @@
 strings = {
     "pm_start": {
-        "en": "Hey {}, I'm {}!\nI'm a bot used to forward messages from one chat to another.\nTo obtain a list of commands, use /help.",
-        "he": "היי {}, אני {}!\nאני עושה פעולות רק למען הצלת חיים.\nבכדי לדעת עלי עוד, לחץ על /help.\n"
+        "en": "Hey {}, I'm {}!\nI'm a bot that does a variety of actions, the main one is forwarding messages from one chat to another.\nTo obtain a list of commands, use /help.",
+        "he": "היי {}, אני {}!\nאני בוט שעושה מגוון פעולות העיקרית היא העברת הודעות מצ'אט אחד לאחר.\nבכדי לדעת עלי עוד, יש ללחוץ על /help.\n"
     },
     "run_msg": {
         "en": "I'm up and running!",
@@ -13,7 +13,7 @@ strings = {
     },
     "pm_me": {
         "en": "Contact me via PM to get a list of usable commands.",
-        "he": "שלח לי הודעה פרטית בכדי לקבל את רשימת הפקודות."
+        "he": "יש לשלוח לי בהודעה פרטית בכדי לקבל את רשימת הפקודות."
     },
     "your_id": {
         "en": "Your ID is `{}`",
