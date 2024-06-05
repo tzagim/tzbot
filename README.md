@@ -2,7 +2,7 @@
 ### *please note:*
 version 3.x works with Telegram Python bot ver 21+
 
-version 2.x works with Telegram Python bot ver 20+
+version 2.x works with Telegram Python bot ver 20-21
 
 version 1.X works with Telegram Python bot ver 13.15 and below!!
 

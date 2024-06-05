@@ -39,8 +39,12 @@ strings = {
         "en": "The forwarder ({}) ID: `{}`",
         "he": "המעביר ({}) מזהה: `{}`"
     },
-    "forwarder_channel": {
+    "original_channel": {
         "en": "The channel {} ID: `{}`\n",
         "he": "ערוץ {} מזהה: `{}`\n"
+    },
+    "empty_result": {
+        "en": "Sorry, I couldn't retrieve the requested information",
+        "he": "מצטער, לא הצלחתי לאחזר את המידע המבוקש"
     },
 }
