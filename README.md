@@ -108,18 +108,21 @@ Installing
 
 
 ### Python dependencies
-Note: If you are using Python 3.12 and above, it is recommended to run first:
-
-```shell
-$ pip install --upgrade setuptools
-```
-
 Install the necessary python dependencies by moving to the project directory and running:
 
 ```shell
 $ git clone https://github.com/tzagim/tzbot
 $ cd tzbot
+```
+If you are using pip:
+
+```shell
 $ pip install -r requirements.txt
+```
+
+If you are using advanced versions of linux that pip cannot be used:
+```shell
+$ sudo apt install python3-anyio python3-certifi python3-h11 python3-httpcore python3-httpx python3-idna python3-dotenv python3-python-telegram-bot python3-rfc3986 python3-sniffio python3-apscheduler
 ```
 
 This will install all necessary python packages.
