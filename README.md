@@ -1,4 +1,6 @@
 # tzbot
+**If you want to send messages as a USER, use: [fuserbot](https://github.com/tzagim/fuserbot)**
+
 ### *please note:*
 version 3.x works with Telegram Python bot ver 21+
 
