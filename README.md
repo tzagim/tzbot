@@ -1,4 +1,6 @@
 # tzbot
+Sending messages from group to group in Telegram using a bot, the main difference between a user and a bot is the ability to edit messages.
+
 **If you want to send messages as a USER, use: [fuserbot](https://github.com/tzagim/fuserbot)**
 
 ### *please note:*
