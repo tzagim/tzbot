@@ -107,6 +107,8 @@ DEFAULT_LANG = en
 
 You may add as many objects as you want. The bot will forward messages from all the chats in the `source` field to all the chats in the `destination` field. Duplicates are allowed as it already handled by the bot.
 
+It is also possible to enter several different filters on the same source.
+
 Installing
 ==========
 
