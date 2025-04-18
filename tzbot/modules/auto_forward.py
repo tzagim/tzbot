@@ -12,8 +12,12 @@ async def send_message(
     message: Message, chat_id: int, thread_id: Optional[int] = None
 ) -> Union[MessageId, Message]:
     if REMOVE_TAG:
-        return await message.copy(chat_id, message_thread_id=thread_id)  # type: ignore
-    return await message.forward(chat_id, message_thread_id=thread_id)  # type: ignore
+        msg = await message.copy(chat_id, message_thread_id=thread_id)
+    else:
+        msg = await message.forward(chat_id, message_thread_id=thread_id)
+    
+    LOGGER.debug(f"Sent message {msg.message_id} to chat {chat_id}")
+    return msg
 
 async def forwarder(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     message = update.effective_message
@@ -23,31 +27,36 @@ async def forwarder(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     dest = get_destination(source.id, message.message_thread_id)
+    text = message.text or ""
 
-    should_forward = False
+    matched_destinations = []
 
     for config in dest:
-        if config.filters and predicate_text(config.filters, message.text or ""):
-            should_forward = True
-        if config.blacklist and predicate_text(config.blacklist, message.text or ""):
-            should_forward = False
+        chat_id = config.destination[0].get_id() if config.destination else None
 
-        if should_forward:
-            for chat in config.destination:
-                LOGGER.debug(f"Forwarding message {source.id} to {chat}")
-                try:
-                    await send_message(message, chat.get_id(), chat.get_topic())
-                except RetryAfter as err:
-                    LOGGER.warning(f"Rate limited, retrying in {err.retry_after} seconds")
-                    await asyncio.sleep(err.retry_after + 0.2)
-                    await send_message(message, chat.get_id(), thread_id=chat.get_topic())
-                except ChatMigrated as err:
-                    await send_message(message, err.new_chat_id)
-                    LOGGER.warning(
-                        f"Chat {chat} has been migrated to {err.new_chat_id}!! Edit the config file!!"
-                    )
-                except Exception as err:
-                    LOGGER.error(f"Failed to forward message from {source.id} to {chat} due to {err}")
+        LOGGER.debug(f"Checking filters for chat_id: {chat_id}")
+
+        matches_filter = predicate_text(config.filters, text)
+        matches_blacklist = predicate_text(config.blacklist, text)
+
+        if matches_filter and not matches_blacklist:
+            matched_destinations.append(config.destination)
+
+    for destination in matched_destinations:
+        for chat in destination:
+            try:
+                await send_message(message, chat.get_id(), chat.get_topic())
+            except RetryAfter as err:
+                LOGGER.warning(f"Rate limited, retrying in {err.retry_after} seconds")
+                await asyncio.sleep(err.retry_after + 0.2)
+                await send_message(message, chat.get_id(), thread_id=chat.get_topic())
+            except ChatMigrated as err:
+                await send_message(message, err.new_chat_id)
+                LOGGER.warning(
+                    f"Chat {chat.get_id()} has been migrated to {err.new_chat_id}. Update the config file!"
+                )
+            except Exception as err:
+                LOGGER.error(f"Failed to forward message to {chat.get_id()} due to {err}")
 
 FORWARD_HANDLER = MessageHandler(
     filters.Chat([config.source.get_id() for config in get_config()])
