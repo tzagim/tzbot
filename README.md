@@ -39,17 +39,16 @@ This is where your bot token will be loaded from, and most of your other setting
 
 Template env may be found in `sample.config.env`. Rename it to `config.env` and fill in the values:
 
-- `BOT_TOKEN` - Telegram bot token. You can get it from [@BotFather](https://t.me/BotFather)
-
-- `OWNER_ID` - An integer or a comma-separated list of consisting of your owner ID.
-
-- `REMOVE_TAG` - set to `True` if you want to remove the tag ("Forwarded from xxxxx") from the forwarded message.
-
-- `GROUPS_TO_DELETE` = An integer or a comma-separated list of consisting of groups from which you want to delete messages after the set time.
-
-- `TIME_TO_DELETE` = An integer to set time to delete in seconds.
- 
-- `DEFAULT_LANG` = Default language when the user language cannot be retrieved and in channels, if blank defaults to English.
+| Value                        | Type  | Default  | Description                                                                                                             | Options        |
+| ----------                   | ----  | ---------| --------                                                                                                                | ------------   |
+| `BOT_TOKEN`                  | `str` |  `none`  | Telegram bot token. You can get it from [@BotFather](https://t.me/BotFather)                                            | `string`       |
+| `OWNER_ID`                   | `int` |  `none`  | An integer or a comma-separated list of consisting of your owner ID.                                                    | `integer`      |
+| `REMOVE_TAG`                 | `str` |  `False` | set to `True` if you want to remove the tag ("Forwarded from xxxxx") from the forwarded message.                        | `False` `True` |
+| `GROUPS_TO_DELETE`           | `int` |  `none`  | An integer or a comma-separated list of consisting of groups from which you want to delete messages after the set time. | `int`          |
+| `TIME_TO_DELETE`             | `int` |  `none`  | An integer to set time to delete in seconds.                                                                            | `int`          |
+| `DEFAULT_LANG`               | `str` |  `en`    | Default language when the user language cannot be retrieved and in channels, if blank defaults to English.              | `en` / `he`    |
+| `APSCHEDULER_LOG_LEVEL`      | `str` |  `INFO`  | Syslog log levels are defined in [RFC 5424](https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1)                | `string`       |
+| `APSCHEDULER_SCHEDULER_INFO` | `int` |  `0`     | An integer that determines whether schedule additions or removals will be displayed: `0` = hidden, `1` = visible0       | `0` / `1`      |
 
 #### `chat_list.json`
 
@@ -92,6 +91,8 @@ REMOVE_TAG = True
 GROUPS_TO_DELETE = -1001234567890, -1234567890
 TIME_TO_DELETE = 900
 DEFAULT_LANG = en
+APSCHEDULER_LOG_LEVEL = INFO
+APSCHEDULER_SCHEDULER_INFO = 0
 ```
 - `source` - The chat ID of the chat to forward messages from. It can be a group or a channel.
 
