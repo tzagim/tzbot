@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tzbot"
-version = "3.4.1"
+version = "3.4.2"
 description = ""
 authors = ["tzagim"]
 license = "GNU General Public License v3.0"
