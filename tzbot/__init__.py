@@ -17,9 +17,29 @@ logging.basicConfig(
 
 LOGGER = logging.getLogger(__name__)
 
-# Hide info from httpx & apscheduler.executors.default
+# Hide info from httpx & apscheduler.executors.default & apscheduler
 logging.getLogger('httpx').setLevel(logging.WARNING)
 logging.getLogger('apscheduler.executors.default').setLevel(logging.WARNING)
+
+APSCHEDULER_LOG_LEVEL = getenv("APSCHEDULER_LOG_LEVEL", "INFO").upper()
+logging.getLogger("apscheduler").setLevel(getattr(logging, APSCHEDULER_LOG_LEVEL, logging.INFO))
+
+# Don't show info about added/removed jobs
+try:
+    APSCHEDULER_SCHEDULER_INFO = int(getenv("APSCHEDULER_SCHEDULER_INFO", 0))
+except ValueError:
+    APSCHEDULER_SCHEDULER_INFO = 0  
+
+class APSchedulerFilter(logging.Filter):
+    def __init__(self):
+        self.filter_enabled = APSCHEDULER_SCHEDULER_INFO == 0
+
+    def filter(self, record):
+        if self.filter_enabled:
+            return not ("Added job" in record.msg or "Removed job" in record.msg)
+        return True
+
+logging.getLogger("apscheduler.scheduler").addFilter(APSchedulerFilter())
 
 # Load json file
 config_name = "chat_list.json"
