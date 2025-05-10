@@ -10,7 +10,7 @@ load_dotenv("config.env")
 
 # Enable logging
 logging.basicConfig(
-    format='[ %(asctime)s: %(levelname)-2s ] %(name)-2s - %(message)s',
+    format='%(asctime)s: %(levelname)-2s - %(name)-2s - %(message)s',
     level=logging.INFO,
     handlers=[logging.FileHandler('tzbot/log.txt', mode='a'), logging.StreamHandler()]
 )
