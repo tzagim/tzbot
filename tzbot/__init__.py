@@ -12,7 +12,7 @@ load_dotenv("config.env")
 logging.basicConfig(
     format='%(asctime)s: %(levelname)-2s - %(name)-2s - %(message)s',
     level=logging.INFO,
-    handlers=[logging.FileHandler('/tzbot/tzbot.log', mode='a'), logging.StreamHandler()]
+    handlers=[logging.FileHandler('tzbot/tzbot.log', mode='a'), logging.StreamHandler()]
 )
 LOGGER = logging.getLogger(__name__)
 
