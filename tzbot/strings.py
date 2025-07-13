@@ -51,4 +51,16 @@ strings = {
         "en": "Sorry, I respond to my owner(s) only.",
         "he": "סליחה, אני מגיב לבעלים שלי בלבד."
     },
+    'member_groups': {
+        'en': "The bot is a member of the following groups:\n{}",
+        'he': "הבוט חבר בקבוצות הבאות:\n{}"
+    },
+    'no_member_groups': {
+        'en': "The bot is not a member of any groups.",
+        'he': "הבוט אינו חבר באף קבוצה.",
+    },
+    'contact_private': {
+        'en': "Please use this command in a private message.",
+        'he': "נא להשתמש בפקודה זו בהודעה פרטית.",
+    },
 }

@@ -12,9 +12,8 @@ load_dotenv("config.env")
 logging.basicConfig(
     format='%(asctime)s: %(levelname)-2s - %(name)-2s - %(message)s',
     level=logging.INFO,
-    handlers=[logging.FileHandler('tzbot/log.txt', mode='a'), logging.StreamHandler()]
+    handlers=[logging.FileHandler('/tzbot/tzbot.log', mode='a'), logging.StreamHandler()]
 )
-
 LOGGER = logging.getLogger(__name__)
 
 # Hide info from httpx & apscheduler.executors.default & apscheduler
@@ -63,12 +62,12 @@ OWNER_ID = list(OWNER_ID)
 
 REMOVE_TAG = getenv("REMOVE_TAG", "False") in {"true", "True", 1}
 
-try:
-    GROUPS_TO_DELETE = set(int(x) for x in getenv("GROUPS_TO_DELETE", "0").split(","))
-except ValueError:
-    raise Exception("Your GROUPS_TO_DELETE list does not contain valid integers.")
+DELETE_AFTER = {}
+for item in CONFIG:
+    if "delete_after" in item:
+        chat_id = int(item["source"])
+        DELETE_AFTER[chat_id] = int(item["delete_after"])
 
-GROUPS_TO_DELETE = list(GROUPS_TO_DELETE)
 TIME_TO_DELETE = int(getenv("TIME_TO_DELETE", "0"))
 
 LANG = str(getenv("DEFAULT_LANG"))
@@ -76,4 +75,10 @@ if not LANG:
     LANG = "en"
 
 bf = Defaults(block=False)
-bot = ApplicationBuilder().token(BOT_TOKEN).concurrent_updates(True).defaults(bf).build()
+bot = (
+    ApplicationBuilder()
+    .token(BOT_TOKEN)
+    .concurrent_updates(True)
+    .defaults(bf)
+    .build()
+)

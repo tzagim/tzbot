@@ -59,7 +59,7 @@ async def forwarder(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
                 LOGGER.error(f"Failed to forward message to {chat.get_id()} due to {err}")
 
 FORWARD_HANDLER = MessageHandler(
-    filters.Chat([config.source.get_id() for config in get_config()])
+    filters.Chat([config.source.get_id() for config in get_config() if config.destination])
     & ~filters.COMMAND
     & ~filters.StatusUpdate.ALL,
     forwarder,

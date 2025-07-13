@@ -44,17 +44,45 @@ Template env may be found in `sample.config.env`. Rename it to `config.env` and 
 | `BOT_TOKEN`                  | `str` |  `none`  | Telegram bot token. You can get it from [@BotFather](https://t.me/BotFather)                                            | `string`       |
 | `OWNER_ID`                   | `int` |  `none`  | An integer or a comma-separated list of consisting of your owner ID.                                                    | `integer`      |
 | `REMOVE_TAG`                 | `str` |  `False` | set to `True` if you want to remove the tag ("Forwarded from xxxxx") from the forwarded message.                        | `False` `True` |
-| `GROUPS_TO_DELETE`           | `int` |  `none`  | An integer or a comma-separated list of consisting of groups from which you want to delete messages after the set time. | `int`          |
-| `TIME_TO_DELETE`             | `int` |  `none`  | An integer to set time to delete in seconds.                                                                            | `int`          |
 | `DEFAULT_LANG`               | `str` |  `en`    | Default language when the user language cannot be retrieved and in channels, if blank defaults to English.              | `en` / `he`    |
 | `APSCHEDULER_LOG_LEVEL`      | `str` |  `INFO`  | Syslog log levels are defined in [RFC 5424](https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1)                | `string`       |
 | `APSCHEDULER_SCHEDULER_INFO` | `int` |  `0`     | An integer that determines whether schedule additions or removals will be displayed: `0` = hidden, `1` = visible0       | `0` / `1`      |
+
+An example `config.env` file could be:
+
+```env
+BOT_TOKEN = 1234567890:Abcdef1234567890GHIJ
+OWNER_ID = 1234567890, 0987654321
+REMOVE_TAG = True
+DEFAULT_LANG = en
+APSCHEDULER_LOG_LEVEL = INFO
+APSCHEDULER_SCHEDULER_INFO = 0
+```
 
 #### `chat_list.json`
 
 Template chat_list may be found in `chat_list.sample.json`. Rename it to `chat_list.json`.
 
 This file contains the list of chats to forward messages from and to. The bot expect it to be an Array of objects with the following structure:
+
+
+- `source` - The chat ID of the chat to forward messages from. It can be a group or a channel.
+
+  > If the source chat is a Topic groups, you **MUST** explicitly specify the topic ID. The bot will ignore incoming message from topic group if the topic ID is not specified.
+
+- `destination` (Optional) - An array of chat IDs to forward messages to. It can be a group or a channel.
+
+  > Destenation supports Topics chat. You can use `#topicID` string to forward to specific topic. Example: `[-10011111111, "-10022222222#123456"]`. With this config it will forward to chat `-10022222222` with topic `123456` and to chat `-10011111111` .
+
+- `filters` (Optional) - An array of strings to filter words. If the message containes any of the strings in the array, it **WILL BE** forwarded.
+
+- `blacklist` (Optional) - An array of strings to blacklist words. If the message containes any of the string in the array, it will **NOT BE** forwarded.
+
+- `delete_after` (Optional) - A numeric integral. Defines the time period after which the message will **be deleted**.
+
+You may add as many objects as you want. The bot will forward messages from all the chats in the `source` field to all the chats in the `destination` field. Duplicates are allowed as it already handled by the bot.
+
+It is also possible to enter several different filters on the same source.
 
 ```json
 [
@@ -76,39 +104,17 @@ This file contains the list of chats to forward messages from and to. The bot ex
     "source": -10087654321,
     "destination": [-10033333333],
     "filters": ["word5"],
-    "blacklist": ["word6"]
-    // message must contain word5 and must not contain word6 to be forwarded
+    "blacklist": ["word6"],
+    "delete_after": 60
+    // message must contain word5 and must not contain word6 to be forwarded and deleted after 60 seconds
+  },
+  {
+    "source": -10087654321,
+    "delete_after": 2700
+    // message from this group will be deleted after 2700 seconds
   }
 ]
 ```
-
-An example `config.env` file could be:
-
-```env
-BOT_TOKEN = 1234567890:Abcdef1234567890GHIJ
-OWNER_ID = 1234567890, 0987654321
-REMOVE_TAG = True
-GROUPS_TO_DELETE = -1001234567890, -1234567890
-TIME_TO_DELETE = 900
-DEFAULT_LANG = en
-APSCHEDULER_LOG_LEVEL = INFO
-APSCHEDULER_SCHEDULER_INFO = 0
-```
-- `source` - The chat ID of the chat to forward messages from. It can be a group or a channel.
-
-  > If the source chat is a Topic groups, you **MUST** explicitly specify the topic ID. The bot will ignore incoming message from topic group if the topic ID is not specified.
-
-- `destination` - An array of chat IDs to forward messages to. It can be a group or a channel.
-
-  > Destenation supports Topics chat. You can use `#topicID` string to forward to specific topic. Example: `[-10011111111, "-10022222222#123456"]`. With this config it will forward to chat `-10022222222` with topic `123456` and to chat `-10011111111` .
-
-- `filters` (Optional) - An array of strings to filter words. If the message containes any of the strings in the array, it **WILL BE** forwarded.
-
-- `blacklist` (Optional) - An array of strings to blacklist words. If the message containes any of the string in the array, it will **NOT BE** forwarded.
-
-You may add as many objects as you want. The bot will forward messages from all the chats in the `source` field to all the chats in the `destination` field. Duplicates are allowed as it already handled by the bot.
-
-It is also possible to enter several different filters on the same source.
 
 Installing
 ==========

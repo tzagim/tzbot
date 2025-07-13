@@ -37,21 +37,24 @@ class ChatConfig:
 
 class ForwardConfig:
     source: ChatConfig
-    destination: List[ChatConfig]
+    destination: Optional[List[ChatConfig]]
     filters: Optional[List[str]]
     blacklist: Optional[List[str]]
+    delete_after: Optional[int]
 
     def __init__(
         self,
         source: Union[str, int],
-        destination: List[Union[str, int]],
+        destination: Optional[List[Union[str, int]]] = None,
         filters: Optional[List[str]] = None,
         blacklist: Optional[List[str]] = None,
+        delete_after: Optional[int] = None,
     ):
         self.source = ChatConfig(source)
-        self.destination = [ChatConfig(item) for item in destination]
+        self.destination = [ChatConfig(item) for item in destination] if destination else None
         self.filters = filters
         self.blacklist = blacklist
+        self.delete_after = delete_after
 
 def get_config() -> List[ForwardConfig]:
     global PARSED_CONFIG
@@ -61,9 +64,10 @@ def get_config() -> List[ForwardConfig]:
     PARSED_CONFIG = [
         ForwardConfig(
             source=chat["source"],
-            destination=chat["destination"],
+            destination=chat.get("destination"),
             filters=chat.get("filters"),
             blacklist=chat.get("blacklist"),
+            delete_after=chat.get("delete_after"),
         )
         for chat in CONFIG
     ]
@@ -80,6 +84,10 @@ def get_destination(chat_id: int, topic_id: Optional[int] = None) -> List[Forwar
     dest: List[ForwardConfig] = []
 
     for chat in get_config():
-        if chat.source.get_id() == chat_id and chat.source.get_topic() == topic_id:
+        if (
+            chat.source.get_id() == chat_id
+            and chat.source.get_topic() == topic_id
+            and chat.destination
+        ):
             dest.append(chat)
     return dest

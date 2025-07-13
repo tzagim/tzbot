@@ -17,7 +17,13 @@
     "source": -10087654321,
     "destination": [-10033333333],
     "filters": ["word5"],
-    "blacklist": ["word6"]
-    // message must contain word5 and must not contain word6 to be forwarded
+    "blacklist": ["word6"],
+    "delete_after": 60
+    // message must contain word5 and must not contain word6 to be forwarded and deleted after 60 seconds
+  },
+  {
+    "source": -10087654321,
+    "delete_after": 60
+    // message from this group will be deleted after 60 seconds
   }
 ]
