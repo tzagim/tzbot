@@ -46,7 +46,7 @@ Template env may be found in `sample.config.env`. Rename it to `config.env` and 
 | `REMOVE_TAG`                 | `str` |  `False` | set to `True` if you want to remove the tag ("Forwarded from xxxxx") from the forwarded message.                        | `False` `True` |
 | `DEFAULT_LANG`               | `str` |  `en`    | Default language when the user language cannot be retrieved and in channels, if blank defaults to English.              | `en` / `he`    |
 | `APSCHEDULER_LOG_LEVEL`      | `str` |  `INFO`  | Syslog log levels are defined in [RFC 5424](https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1)                | `string`       |
-| `APSCHEDULER_SCHEDULER_INFO` | `int` |  `0`     | An integer that determines whether schedule additions or removals will be displayed: `0` = hidden, `1` = visible0       | `0` / `1`      |
+| `APSCHEDULER_SCHEDULER_INFO` | `int` |  `0`     | An integer that determines whether schedule additions or removals will be displayed: `0` = hidden, `1` = visible        | `0` / `1`      |
 
 An example `config.env` file could be:
 
