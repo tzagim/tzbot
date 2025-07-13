@@ -6,62 +6,67 @@ from telegram.error import ChatMigrated, RetryAfter
 from telegram.ext import MessageHandler, filters, ContextTypes
 
 from tzbot import bot, REMOVE_TAG, LOGGER
+from tzbot.common import schedule_delete
 from tzbot.utils import get_destination, get_config, predicate_text
 
+FORWARD_CHAT_IDS = [
+    cfg.source.get_id()
+    for cfg in get_config()
+    if cfg.destination
+]
+
 async def send_message(
-    message: Message, chat_id: int, thread_id: Optional[int] = None
+    m: Message,
+    chat_id: int,
+    context: ContextTypes.DEFAULT_TYPE,
+    thread_id: Optional[int] = None,
 ) -> Union[MessageId, Message]:
     if REMOVE_TAG:
-        msg = await message.copy(chat_id, message_thread_id=thread_id)
+        msg = await m.copy(chat_id, message_thread_id=thread_id)
     else:
-        msg = await message.forward(chat_id, message_thread_id=thread_id)
+        msg = await m.forward(chat_id, message_thread_id=thread_id)
     
     LOGGER.debug(f"Sent message {msg.message_id} to chat {chat_id}")
+
+    if context:
+        schedule_delete(context, chat_id, msg.message_id)
     return msg
 
-async def forwarder(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
+async def forwarder(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message = update.effective_message
-    source = update.effective_chat
+    source  = update.effective_chat
 
     if not message or not source:
         return
 
-    dest = get_destination(source.id, message.message_thread_id)
+    dest_configs = get_destination(source.id, message.message_thread_id)
     text = message.text or ""
 
-    matched_destinations = []
+    for cfg in dest_configs:
+        if not (predicate_text(cfg.filters, text) and not predicate_text(cfg.blacklist, text)):
+            continue
 
-    for config in dest:
-        chat_id = config.destination[0].get_id() if config.destination else None
-
-        LOGGER.debug(f"Checking filters for chat_id: {chat_id}")
-
-        matches_filter = predicate_text(config.filters, text)
-        matches_blacklist = predicate_text(config.blacklist, text)
-
-        if matches_filter and not matches_blacklist:
-            matched_destinations.append(config.destination)
-
-    for destination in matched_destinations:
-        for chat in destination:
+        for dest in cfg.destination or []:
+            cid = dest.get_id()
+            tid = dest.get_topic()
             try:
-                await send_message(message, chat.get_id(), chat.get_topic())
+                await send_message(message, cid, context, tid)
             except RetryAfter as err:
                 LOGGER.warning(f"Rate limited, retrying in {err.retry_after} seconds")
                 await asyncio.sleep(err.retry_after + 0.2)
-                await send_message(message, chat.get_id(), thread_id=chat.get_topic())
+                await send_message(message, cid, context, tid)
             except ChatMigrated as err:
-                await send_message(message, err.new_chat_id)
+                await send_message(message, err.new_chat_id, context, None)
                 LOGGER.warning(
-                    f"Chat {chat.get_id()} has been migrated to {err.new_chat_id}. Update the config file!"
+                    f"Chat {cid} has been migrated to {err.new_chat_id}. Update the config file!"
                 )
-            except Exception as err:
-                LOGGER.error(f"Failed to forward message to {chat.get_id()} due to {err}")
+            except Exception:
+                LOGGER.error(f"Unexpected error forwarding to {cid}")
 
 FORWARD_HANDLER = MessageHandler(
-    filters.Chat([config.source.get_id() for config in get_config() if config.destination])
+    filters.Chat(FORWARD_CHAT_IDS)
     & ~filters.COMMAND
     & ~filters.StatusUpdate.ALL,
     forwarder,
 )
-bot.add_handler(FORWARD_HANDLER)
+bot.add_handler(FORWARD_HANDLER, group=0)

@@ -1,7 +1,6 @@
 import logging
 import json
 from os import getenv, path
-
 from dotenv import load_dotenv
 from telegram.ext import ApplicationBuilder, Defaults
 
@@ -12,7 +11,10 @@ load_dotenv("config.env")
 logging.basicConfig(
     format='%(asctime)s: %(levelname)-2s - %(name)-2s - %(message)s',
     level=logging.INFO,
-    handlers=[logging.FileHandler('tzbot/tzbot.log', mode='a'), logging.StreamHandler()]
+    handlers=[
+        logging.FileHandler('tzbot/tzbot.log', mode='a'),
+        logging.StreamHandler()
+    ]
 )
 LOGGER = logging.getLogger(__name__)
 
@@ -41,18 +43,28 @@ class APSchedulerFilter(logging.Filter):
 logging.getLogger("apscheduler.scheduler").addFilter(APSchedulerFilter())
 
 # Load json file
-config_name = "chat_list.json"
-if not path.isfile(config_name):
-    LOGGER.error("No chat_list.json config file found! Exiting...")
+try:
+    with open("chat_list.json", encoding="utf-8") as f:
+        CONFIG = json.load(f)
+except FileNotFoundError:
+    LOGGER.error("chat_list.json not found. Exiting.")
     exit(1)
-with open(config_name, "r") as data:
-    CONFIG = json.load(data)
 
+# build delete-after mapping
+DELETE_AFTER = {
+    int(item["source"]): int(item["delete_after"])
+    for item in CONFIG
+    if "delete_after" in item
+}
+LOGGER.info(f"Auto-delete mapping loaded: {DELETE_AFTER}")
+
+# core bot instance
 BOT_TOKEN = getenv("BOT_TOKEN")
 if not BOT_TOKEN:
     LOGGER.error("No BOT_TOKEN token provided!")
     exit(1)
 
+# Owner ID
 try:
     OWNER_ID = set(int(x) for x in getenv("OWNER_ID", "0").split(","))
 except ValueError:
@@ -60,16 +72,10 @@ except ValueError:
 
 OWNER_ID = list(OWNER_ID)
 
+# Remove tag option
 REMOVE_TAG = getenv("REMOVE_TAG", "False") in {"true", "True", 1}
 
-DELETE_AFTER = {}
-for item in CONFIG:
-    if "delete_after" in item:
-        chat_id = int(item["source"])
-        DELETE_AFTER[chat_id] = int(item["delete_after"])
-
-TIME_TO_DELETE = int(getenv("TIME_TO_DELETE", "0"))
-
+# Default language
 LANG = str(getenv("DEFAULT_LANG"))
 if not LANG:
     LANG = "en"
@@ -82,3 +88,5 @@ bot = (
     .defaults(bf)
     .build()
 )
+
+import tzbot.common
