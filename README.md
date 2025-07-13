@@ -78,7 +78,7 @@ This file contains the list of chats to forward messages from and to. The bot ex
 
 - `blacklist` (Optional) - An array of strings to blacklist words. If the message containes any of the string in the array, it will **NOT BE** forwarded.
 
-- `delete_after` (Optional) - A numeric integral. Defines the time period after which the message will **be deleted**.
+- `delete_after` (Optional) - A numeric integral. Defines the time **in seconds** period after which the message will **be deleted**.
 
 You may add as many objects as you want. The bot will forward messages from all the chats in the `source` field to all the chats in the `destination` field. Duplicates are allowed as it already handled by the bot.
 
