@@ -4,6 +4,8 @@ Sending messages from group to group in Telegram using a bot, the main differenc
 **If you want to send messages as a USER, use: [fuserbot](https://github.com/tzagim/fuserbot)**
 
 ### *please note:*
+version 4.x works with Telegram Python bot ver 22+
+
 version 3.x works with Telegram Python bot ver 21+
 
 version 2.x works with Telegram Python bot ver 20-21
