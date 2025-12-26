@@ -9,11 +9,8 @@ from tzbot import bot, REMOVE_TAG, LOGGER
 from tzbot.common import schedule_delete
 from tzbot.utils import get_destination, get_config, predicate_text
 
-FORWARD_CHAT_IDS = [
-    cfg.source.get_id()
-    for cfg in get_config()
-    if cfg.destination
-]
+FORWARD_CHAT_IDS = [cfg.source.get_id() for cfg in get_config() if cfg.destination]
+
 
 async def send_message(
     m: Message,
@@ -25,25 +22,29 @@ async def send_message(
         msg = await m.copy(chat_id, message_thread_id=thread_id)
     else:
         msg = await m.forward(chat_id, message_thread_id=thread_id)
-    
+
     LOGGER.debug(f"Sent message {msg.message_id} to chat {chat_id}")
 
     if context:
         schedule_delete(context, chat_id, msg.message_id)
     return msg
 
+
 async def forwarder(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message = update.effective_message
-    source  = update.effective_chat
+    source = update.effective_chat
 
     if not message or not source:
         return
 
     dest_configs = get_destination(source.id, message.message_thread_id)
-    text = message.text or ""
+    text = message.text or message.caption or ""
 
     for cfg in dest_configs:
-        if not (predicate_text(cfg.filters, text) and not predicate_text(cfg.blacklist, text)):
+        if not (
+            predicate_text(cfg.filters, text)
+            and not predicate_text(cfg.blacklist, text)
+        ):
             continue
 
         for dest in cfg.destination or []:
@@ -63,10 +64,9 @@ async def forwarder(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             except Exception:
                 LOGGER.error(f"Unexpected error forwarding to {cid}")
 
+
 FORWARD_HANDLER = MessageHandler(
-    filters.Chat(FORWARD_CHAT_IDS)
-    & ~filters.COMMAND
-    & ~filters.StatusUpdate.ALL,
+    filters.Chat(FORWARD_CHAT_IDS) & ~filters.COMMAND & ~filters.StatusUpdate.ALL,
     forwarder,
 )
 bot.add_handler(FORWARD_HANDLER, group=0)
