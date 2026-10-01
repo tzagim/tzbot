@@ -1,12 +1,9 @@
-version: "3.9"
-
 services:
-  telegram-forwarder:
+  tzbot:
     container_name: tzbot
-    image: tzbot-image
+    build: .
     restart: unless-stopped
-    build:
-      context: .
-      dockerfile: Dockerfile
     env_file:
       - config.env
+    volumes:
+      - ./chat_list.json:/app/chat_list.json
