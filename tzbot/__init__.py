@@ -1,18 +1,22 @@
 import logging
 import json
-from os import getenv
+from os import getenv, makedirs, path
 from dotenv import load_dotenv
 from telegram.ext import ApplicationBuilder, Defaults
 
 # Load config.env
 load_dotenv("config.env")
 
+# Log file location (default: tzbot/tzbot.log), create its folder if missing
+LOG_FILE = (getenv("LOG_FILE") or "tzbot/tzbot.log").strip()
+makedirs(path.dirname(LOG_FILE) or ".", exist_ok=True)
+
 # Enable logging
 logging.basicConfig(
     format='%(asctime)s: %(levelname)-2s - %(name)-2s - %(message)s',
     level=logging.INFO,
     handlers=[
-        logging.FileHandler('tzbot/tzbot.log', mode='a'),
+        logging.FileHandler(LOG_FILE, mode='a'),
         logging.StreamHandler()
     ]
 )
