@@ -49,6 +49,7 @@ Template env may be found in `sample.config.env`. Rename it to `config.env` and 
 | `DEFAULT_LANG`               | `str` |  `en`    | Default language when the user language cannot be retrieved and in channels, if blank defaults to English.              | `en` / `he`    |
 | `APSCHEDULER_LOG_LEVEL`      | `str` |  `INFO`  | Syslog log levels are defined in [RFC 5424](https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1)                | `string`       |
 | `APSCHEDULER_SCHEDULER_INFO` | `int` |  `0`     | An integer that determines whether schedule additions or removals will be displayed: `0` = hidden, `1` = visible        | `0` / `1`      |
+| `LOG_FILE`                   | `str` |  `tzbot/tzbot.log` | Path to the log file. Relative paths are relative to the project root. The folder is created automatically if it does not exist. | `string` |
 
 An example `config.env` file could be:
 
@@ -59,6 +60,7 @@ REMOVE_TAG = True
 DEFAULT_LANG = en
 APSCHEDULER_LOG_LEVEL = INFO
 APSCHEDULER_SCHEDULER_INFO = 0
+LOG_FILE = logs/tzbot.log
 ```
 
 #### `chat_list.json`
