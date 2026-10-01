@@ -1,0 +1,12 @@
+# Bot configuration (contains secrets / personal data)
+config.env
+chat_list.json
+
+# Logs
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
