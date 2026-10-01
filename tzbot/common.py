@@ -2,11 +2,10 @@ from telegram import Update
 from telegram.ext import ContextTypes, CommandHandler, filters
 from telegram.constants import ParseMode
 from telegram.error import BadRequest
+from telegram.helpers import escape_markdown
 
 from tzbot.strings import strings
 from tzbot import bot, OWNER_ID, LANG, LOGGER, DELETE_AFTER
-
-GROUP_IDS = list(DELETE_AFTER.keys())
 
 async def delete_job(context: ContextTypes.DEFAULT_TYPE):
     chat_id, message_id = context.job.data
@@ -31,12 +30,11 @@ def schedule_delete(context: ContextTypes.DEFAULT_TYPE, chat_id: int, message_id
         )
 
 def get_lang_code(message):
-    if not message:
-        return LANG
-    try:
-        return message.from_user.language_code
-    except (AttributeError, KeyError):
-        return LANG
+    user = getattr(message, "from_user", None) if message else None
+    code = getattr(user, "language_code", None)
+    if code in strings["pm_start"]:
+        return code
+    return LANG if LANG in strings["pm_start"] else "en"
 
 def is_owner(user_id):
     return user_id in OWNER_ID
@@ -111,14 +109,14 @@ async def id_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 if chat.id == sender.id:
                     result = ''
                 else:
-                    result += strings["original_sender"][lang_code].format(sender.first_name, sender.id)
+                    result += strings["original_sender"][lang_code].format(escape_markdown(sender.first_name), sender.id)
 
             # Forwarded channel
             elif forward_origin.type == 'channel':
                 channel = forward_origin.chat
-                result += strings["original_channel"][lang_code].format(channel.title, channel.id)
+                result += strings["original_channel"][lang_code].format(escape_markdown(channel.title or ""), channel.id)
 
-            result += strings['forwarder_user'][lang_code].format(forwarder.first_name if forwarder else 'Unknown', forwarder.id if forwarder else 'Unknown')
+            result += strings['forwarder_user'][lang_code].format(escape_markdown(forwarder.first_name) if forwarder else 'Unknown', forwarder.id if forwarder else 'Unknown')
 
     else:
         # Private chat with the bot

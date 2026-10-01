@@ -37,14 +37,16 @@ async def forwarder(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not message or not source:
         return
 
-    dest_configs = get_destination(source.id, message.message_thread_id)
+    # Only forum topics count as a thread; replies in regular groups also carry a thread id
+    thread_id = message.message_thread_id if message.is_topic_message else None
+    dest_configs = get_destination(source.id, thread_id)
     text = message.text or message.caption or ""
 
     for cfg in dest_configs:
-        if not (
-            predicate_text(cfg.filters, text)
-            and not predicate_text(cfg.blacklist, text)
-        ):
+        # No filters = forward everything; otherwise at least one filter must match
+        if cfg.filters and not predicate_text(cfg.filters, text):
+            continue
+        if predicate_text(cfg.blacklist, text):
             continue
 
         for dest in cfg.destination or []:

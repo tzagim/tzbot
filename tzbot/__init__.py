@@ -1,18 +1,22 @@
 import logging
 import json
-from os import getenv, path
+from os import getenv, makedirs, path
 from dotenv import load_dotenv
 from telegram.ext import ApplicationBuilder, Defaults
 
 # Load config.env
 load_dotenv("config.env")
 
+# Log file location (default: tzbot/tzbot.log), create its folder if missing
+LOG_FILE = (getenv("LOG_FILE") or "tzbot/tzbot.log").strip()
+makedirs(path.dirname(LOG_FILE) or ".", exist_ok=True)
+
 # Enable logging
 logging.basicConfig(
     format='%(asctime)s: %(levelname)-2s - %(name)-2s - %(message)s',
     level=logging.INFO,
     handlers=[
-        logging.FileHandler('tzbot/tzbot.log', mode='a'),
+        logging.FileHandler(LOG_FILE, mode='a'),
         logging.StreamHandler()
     ]
 )
@@ -52,7 +56,7 @@ except FileNotFoundError:
 
 # build delete-after mapping
 DELETE_AFTER = {
-    int(item["source"]): int(item["delete_after"])
+    int(str(item["source"]).split("#")[0]): int(item["delete_after"])
     for item in CONFIG
     if "delete_after" in item
 }
@@ -73,12 +77,10 @@ except ValueError:
 OWNER_ID = list(OWNER_ID)
 
 # Remove tag option
-REMOVE_TAG = getenv("REMOVE_TAG", "False") in {"true", "True", 1}
+REMOVE_TAG = getenv("REMOVE_TAG", "False").strip().lower() in {"true", "1"}
 
 # Default language
-LANG = str(getenv("DEFAULT_LANG"))
-if not LANG:
-    LANG = "en"
+LANG = (getenv("DEFAULT_LANG") or "en").strip()
 
 bf = Defaults(block=False)
 bot = (

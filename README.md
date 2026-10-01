@@ -34,8 +34,8 @@ Please make sure to use the latest Python version. (*Recommended*)
 
 Configuring your bot: a `config.env` and `chat_list.json` files.
 
-This file should be placed in `tzbot` folder, alongside the `__main__.py` file . 
-This is where your bot token will be loaded from, and most of your other settings.
+Both files should be placed in the project root folder (the folder you run `python3 -m tzbot` from), not inside the `tzbot` folder.
+`config.env` is where your bot token will be loaded from, and most of your other settings.
 
 #### `config.env`
 
@@ -49,6 +49,7 @@ Template env may be found in `sample.config.env`. Rename it to `config.env` and 
 | `DEFAULT_LANG`               | `str` |  `en`    | Default language when the user language cannot be retrieved and in channels, if blank defaults to English.              | `en` / `he`    |
 | `APSCHEDULER_LOG_LEVEL`      | `str` |  `INFO`  | Syslog log levels are defined in [RFC 5424](https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1)                | `string`       |
 | `APSCHEDULER_SCHEDULER_INFO` | `int` |  `0`     | An integer that determines whether schedule additions or removals will be displayed: `0` = hidden, `1` = visible        | `0` / `1`      |
+| `LOG_FILE`                   | `str` |  `tzbot/tzbot.log` | Path to the log file. Relative paths are relative to the project root. The folder is created automatically if it does not exist. | `string` |
 
 An example `config.env` file could be:
 
@@ -59,6 +60,7 @@ REMOVE_TAG = True
 DEFAULT_LANG = en
 APSCHEDULER_LOG_LEVEL = INFO
 APSCHEDULER_SCHEDULER_INFO = 0
+LOG_FILE = logs/tzbot.log
 ```
 
 #### `chat_list.json`
@@ -74,13 +76,19 @@ This file contains the list of chats to forward messages from and to. The bot ex
 
 - `destination` (Optional) - An array of chat IDs to forward messages to. It can be a group or a channel.
 
-  > Destenation supports Topics chat. You can use `#topicID` string to forward to specific topic. Example: `[-10011111111, "-10022222222#123456"]`. With this config it will forward to chat `-10022222222` with topic `123456` and to chat `-10011111111` .
+  > Destination supports Topics chat. You can use `#topicID` string to forward to specific topic. Example: `[-10011111111, "-10022222222#123456"]`. With this config it will forward to chat `-10022222222` with topic `123456` and to chat `-10011111111` .
 
-- `filters` (Optional) - An array of strings to filter words. If the message containes any of the strings in the array, it **WILL BE** forwarded.
+- `filters` (Optional) - An array of strings to filter words. If the message contains any of the strings in the array, it **WILL BE** forwarded. If omitted, all messages are forwarded.
 
-- `blacklist` (Optional) - An array of strings to blacklist words. If the message containes any of the string in the array, it will **NOT BE** forwarded.
+- `blacklist` (Optional) - An array of strings to blacklist words. If the message contains any of the strings in the array, it will **NOT BE** forwarded.
 
-- `delete_after` (Optional) - A numeric integral. Defines the time **in seconds** period after which the message will **be deleted**.
+- `delete_after` (Optional) - An integer. Time **in seconds** after which messages will **be deleted**.
+
+  > `delete_after` applies to the **whole source chat**, not just to the rule it is written in: every message in that chat is deleted after the given time, regardless of `filters` / `blacklist` and whether it was forwarded. Bot replies to commands in that chat are deleted as well.
+  >
+  > Forwarded copies are deleted only if the **destination** chat has its own `delete_after` (as a `source` entry).
+  >
+  > If the same source chat has more than one `delete_after`, the last one in the file wins.
 
 You may add as many objects as you want. The bot will forward messages from all the chats in the `source` field to all the chats in the `destination` field. Duplicates are allowed as it already handled by the bot.
 
@@ -108,12 +116,13 @@ It is also possible to enter several different filters on the same source.
     "filters": ["word5"],
     "blacklist": ["word6"],
     "delete_after": 60
-    // message must contain word5 and must not contain word6 to be forwarded and deleted after 60 seconds
+    // message must contain word5 and must not contain word6 to be forwarded
+    // ALL messages in chat -10087654321 will be deleted after 60 seconds
   },
   {
-    "source": -10087654321,
+    "source": -10099999999,
     "delete_after": 2700
-    // message from this group will be deleted after 2700 seconds
+    // all messages in this chat will be deleted after 2700 seconds (no forwarding)
   }
 ]
 ```
@@ -137,19 +146,23 @@ $ pip install -r requirements.txt
 
 If you are using advanced versions of linux that pip cannot be used:
 ```shell
-$ sudo apt install python3-anyio python3-certifi python3-h11 python3-httpcore python3-httpx python3-idna python3-dotenv python3-python-telegram-bot python3-rfc3986 python3-sniffio python3-apscheduler
+$ sudo apt install python3-anyio python3-certifi python3-h11 python3-httpcore python3-httpx python3-idna python3-dotenv python3-python-telegram-bot python3-sniffio python3-apscheduler
 ```
+
+> Note: distribution packages may be older than the versions required (python-telegram-bot 22+). If the bot fails to start, use pip in a virtual environment instead.
 
 This will install all necessary python packages.
 
 ### Launch in Docker container
 
-#### Requrements
+#### Requirements
 
 - Docker
 - docker compose
 
-Before launch make sure all configuration are completed (`config.env` and `chat_list.json`)!
+Before launch make sure all configuration is completed (`config.env` and `chat_list.json` in the project root)!
+
+`chat_list.json` is mounted into the container, so after editing it just run `docker compose restart`. Changes to `config.env` require `docker compose up -d` to take effect.
 
 Then, simply run the command:
 
@@ -167,7 +180,7 @@ docker compose logs -f
 Starting The Bot
 ==========
 
-Once you've setup your database and your configuration (see below) is complete, simply run:
+Once your configuration (see above) is complete, run from the project root:
 
     $ python3 -m tzbot
 
