@@ -4,6 +4,6 @@ services:
     build: .
     restart: unless-stopped
     env_file:
-      - tzbot/config.env
+      - config.env
     volumes:
-      - ./tzbot/chat_list.json:/app/tzbot/chat_list.json
+      - ./chat_list.json:/app/chat_list.json
