@@ -1,3 +1,6 @@
 .git
-tzbot/config.env
-tzbot/chat_list.json
+.github
+config.env
+chat_list.json
+tzbot/tzbot.log
+**/__pycache__
