@@ -1,6 +1,6 @@
 import logging
 import json
-from os import getenv, path
+from os import getenv
 from dotenv import load_dotenv
 from telegram.ext import ApplicationBuilder, Defaults
 
@@ -52,7 +52,7 @@ except FileNotFoundError:
 
 # build delete-after mapping
 DELETE_AFTER = {
-    int(item["source"]): int(item["delete_after"])
+    int(str(item["source"]).split("#")[0]): int(item["delete_after"])
     for item in CONFIG
     if "delete_after" in item
 }
@@ -73,12 +73,10 @@ except ValueError:
 OWNER_ID = list(OWNER_ID)
 
 # Remove tag option
-REMOVE_TAG = getenv("REMOVE_TAG", "False") in {"true", "True", 1}
+REMOVE_TAG = getenv("REMOVE_TAG", "False").strip().lower() in {"true", "1"}
 
 # Default language
-LANG = str(getenv("DEFAULT_LANG"))
-if not LANG:
-    LANG = "en"
+LANG = (getenv("DEFAULT_LANG") or "en").strip()
 
 bf = Defaults(block=False)
 bot = (
