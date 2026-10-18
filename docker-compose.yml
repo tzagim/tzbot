@@ -5,5 +5,15 @@ services:
     restart: unless-stopped
     env_file:
       - config.env
+    environment:
+      # Keep the log outside the container, so it survives "docker compose up -d" and rebuilds
+      LOG_FILE: /app/data/tzbot.log
     volumes:
-      - ./chat_list.json:/app/chat_list.json
+      - ./chat_list.json:/app/chat_list.json:ro
+      - ./data:/app/data
+    # The log is also printed to stdout; cap what Docker keeps of it
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
