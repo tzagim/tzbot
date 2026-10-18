@@ -30,6 +30,22 @@ async def send_message(
     return msg
 
 
+async def forward_to(m: Message, dest, context: ContextTypes.DEFAULT_TYPE) -> None:
+    cid = dest.get_id()
+    tid = dest.get_topic()
+    try:
+        await send_message(m, cid, context, tid)
+    except RetryAfter as err:
+        LOGGER.warning(f"Rate limited, retrying in {err.retry_after} seconds")
+        await asyncio.sleep(err.retry_after + 0.2)
+        await send_message(m, cid, context, tid)
+    except ChatMigrated as err:
+        LOGGER.warning(
+            f"Chat {cid} has been migrated to {err.new_chat_id}. Update the config file!"
+        )
+        await send_message(m, err.new_chat_id, context, None)
+
+
 async def forwarder(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message = update.effective_message
     source = update.effective_chat
@@ -50,21 +66,11 @@ async def forwarder(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             continue
 
         for dest in cfg.destination or []:
-            cid = dest.get_id()
-            tid = dest.get_topic()
+            # A failure (including a failed retry) must not stop the remaining destinations
             try:
-                await send_message(message, cid, context, tid)
-            except RetryAfter as err:
-                LOGGER.warning(f"Rate limited, retrying in {err.retry_after} seconds")
-                await asyncio.sleep(err.retry_after + 0.2)
-                await send_message(message, cid, context, tid)
-            except ChatMigrated as err:
-                await send_message(message, err.new_chat_id, context, None)
-                LOGGER.warning(
-                    f"Chat {cid} has been migrated to {err.new_chat_id}. Update the config file!"
-                )
-            except Exception:
-                LOGGER.error(f"Unexpected error forwarding to {cid}")
+                await forward_to(message, dest, context)
+            except Exception as err:
+                LOGGER.error(f"Failed forwarding to {dest}: {type(err).__name__}: {err}")
 
 
 FORWARD_HANDLER = MessageHandler(
