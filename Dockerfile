@@ -10,6 +10,7 @@ RUN apt-get update \
 
 WORKDIR /app
 COPY requirements.txt ./
+RUN chmod -R a+rX /app
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 CMD ["python3", "-m", "tzbot"]
