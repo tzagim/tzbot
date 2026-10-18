@@ -50,6 +50,8 @@ Template env may be found in `sample.config.env`. Rename it to `config.env` and 
 | `APSCHEDULER_LOG_LEVEL`      | `str` |  `INFO`  | Syslog log levels are defined in [RFC 5424](https://datatracker.ietf.org/doc/html/rfc5424#section-6.2.1)                | `string`       |
 | `APSCHEDULER_SCHEDULER_INFO` | `int` |  `0`     | An integer that determines whether schedule additions or removals will be displayed: `0` = hidden, `1` = visible        | `0` / `1`      |
 | `LOG_FILE`                   | `str` |  `tzbot/tzbot.log` | Path to the log file. Relative paths are relative to the project root. The folder is created automatically if it does not exist. | `string` |
+| `CHAT_LIST_FILE`             | `str` |  `chat_list.json` | Path to the chat list file. Relative paths are relative to the project root. | `string` |
+| `TZ`                         | `str` |  `UTC` (in Docker) | Time zone for the log timestamps, e.g. `Asia/Jerusalem`. Outside Docker the system time zone is used. | `string` |
 
 An example `config.env` file could be:
 
@@ -163,6 +165,27 @@ This will install all necessary python packages.
 Before launch make sure all configuration is completed (`config.env` and `chat_list.json` in the project root)!
 
 `chat_list.json` is mounted into the container, so after editing it just run `docker compose restart`. Changes to `config.env` require `docker compose up -d` to take effect.
+
+The log is written to `data/tzbot.log` in the project root, so it is kept across `docker compose up -d` and rebuilds.
+
+#### Running as a non-root user (optional)
+
+By default the container runs as root. To run it as a regular user, create a `docker-compose.override.yml` next to `docker-compose.yml` (it is merged automatically and ignored by git), for example:
+
+```yaml
+services:
+  tzbot:
+    user: "1000:1000"   # the output of: id -u; id -g
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+```
+
+The `data` folder must be writable by that user: `mkdir -p data && chown 1000:1000 data`.
 
 Then, simply run the command:
 
