@@ -1,4 +1,5 @@
 import logging
+import logging.handlers
 import json
 from os import getenv, makedirs, path
 from dotenv import load_dotenv
@@ -16,7 +17,8 @@ logging.basicConfig(
     format='%(asctime)s: %(levelname)-2s - %(name)-2s - %(message)s',
     level=logging.INFO,
     handlers=[
-        logging.FileHandler(LOG_FILE, mode='a'),
+        # WatchedFileHandler reopens the file after logrotate moves it
+        logging.handlers.WatchedFileHandler(LOG_FILE, mode='a', encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -46,12 +48,17 @@ class APSchedulerFilter(logging.Filter):
 
 logging.getLogger("apscheduler.scheduler").addFilter(APSchedulerFilter())
 
-# Load json file
+# Load json file (default: chat_list.json in the project root)
+CHAT_LIST_FILE = (getenv("CHAT_LIST_FILE") or "chat_list.json").strip()
 try:
-    with open("chat_list.json", encoding="utf-8") as f:
+    with open(CHAT_LIST_FILE, encoding="utf-8") as f:
         CONFIG = json.load(f)
 except FileNotFoundError:
-    LOGGER.error("chat_list.json not found. Exiting.")
+    LOGGER.error(f"{CHAT_LIST_FILE} not found. Exiting.")
+    exit(1)
+except json.JSONDecodeError as err:
+    # Common cause: copying chat_list.sample.json as-is – JSON does not allow // comments
+    LOGGER.error(f"{CHAT_LIST_FILE} is not valid JSON ({err}). Remove any // comments. Exiting.")
     exit(1)
 
 # build delete-after mapping
