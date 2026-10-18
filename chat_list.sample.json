@@ -19,11 +19,12 @@
     "filters": ["word5"],
     "blacklist": ["word6"],
     "delete_after": 60
-    // message must contain word5 and must not contain word6 to be forwarded and deleted after 60 seconds
+    // message must contain word5 and must not contain word6 to be forwarded
+    // ALL messages in chat -10087654321 will be deleted after 60 seconds
   },
   {
-    "source": -10087654321,
-    "delete_after": 60
-    // message from this group will be deleted after 60 seconds
+    "source": -10987654321,
+    "delete_after": 2700
+    // all messages in this chat will be deleted after 2700 seconds (no forwarding)
   }
 ]

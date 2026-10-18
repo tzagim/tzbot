@@ -2,5 +2,8 @@
 .github
 config.env
 chat_list.json
-tzbot/tzbot.log
+config/
+data/
+docker-compose.override.yml
+*.log
 **/__pycache__
