@@ -1,9 +1,14 @@
 # Bot configuration (contains secrets / personal data)
 config.env
 chat_list.json
+config/
 
-# Logs
+# Logs and runtime data
 *.log
+data/
+
+# Local Docker Compose overrides (e.g. running as a non-root user)
+docker-compose.override.yml
 
 # Python
 __pycache__/
